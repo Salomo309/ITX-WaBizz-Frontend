@@ -11,7 +11,7 @@ interface HeaderProps {
   title: string;
 }
 
-const Header: React.FC<HeaderProps> = ({ title }) => {
+const Header: React.FC<HeaderProps> = ({  }) => {
   return (
     <View style={styles.header}>
       <Text style={styles.headerText}>ITX WABizz</Text>
