@@ -17,10 +17,10 @@ const Header: React.FC<HeaderProps> = ({  }) => {
       <Text style={styles.headerText}>ITX WABizz</Text>
       <View style={styles.rightIcons}>
         <TouchableOpacity onPress={() => {}}>
-          <Ionicons name="search-outline" size={24} color={Colors.white} style={styles.icon} />
+          <Ionicons name="search-sharp" size={24} color={Colors.white} style={styles.icon} />
         </TouchableOpacity>
         <TouchableOpacity onPress={() => {}}>
-          <Ionicons name="person-circle-outline" size={30} color={Colors.white} />
+          <Ionicons name="person-circle-sharp" size={30} color={Colors.white} />
         </TouchableOpacity>
       </View>
     </View>
