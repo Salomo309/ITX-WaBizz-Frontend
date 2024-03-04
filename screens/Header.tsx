@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, Text, TouchableOpacity, Image } from 'react-native';
 // import { Ionicons } from '@expo/vector-icons';
 import Ionicons from '@expo/vector-icons/Ionicons';
 // import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -8,10 +8,10 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import Colors from '../constants/colors';
 
 interface HeaderProps {
-  title: string;
+  userProfilePic: string;
 }
 
-const Header: React.FC<HeaderProps> = ({  }) => {
+const Header: React.FC<HeaderProps> = ({ userProfilePic }) => {
   return (
     <View style={styles.header}>
       <Text style={styles.headerText}>ITX WABizz</Text>
@@ -20,7 +20,11 @@ const Header: React.FC<HeaderProps> = ({  }) => {
           <Ionicons name="search-sharp" size={24} color={Colors.white} style={styles.icon} />
         </TouchableOpacity>
         <TouchableOpacity onPress={() => {}}>
-          <Ionicons name="person-circle-sharp" size={30} color={Colors.white} />
+          {userProfilePic=='' ? (
+            <Ionicons name="person-circle-sharp" size={30} color={Colors.white} />
+          ) : (
+            <Image source={{uri: userProfilePic}} style={styles.containerProfilePic} />
+          )}
         </TouchableOpacity>
       </View>
     </View>
@@ -40,7 +44,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: 'white',
     fontFamily: 'Roboto',
-    fontWeight: '500',
+    fontWeight: '700',
   },
   rightIcons: {
     flexDirection: 'row',
@@ -48,6 +52,11 @@ const styles = StyleSheet.create({
   },
   icon: {
     marginRight: 15,
+  },
+  containerProfilePic: {
+    height: 30,
+    width: 30,
+    borderRadius: 25,
   }
 });
 

@@ -53,7 +53,7 @@ const ChatroomList = () => {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar backgroundColor={Colors.primary1} />
-      <Header title="" />
+      <Header userProfilePic="https://th.bing.com/th/id/OIP.CtpCzACf2_IjRw2YX7n20AHaJ4?rs=1&pid=ImgDetMain" />
       <ScrollView>
         <View style={styles.content}>
         <ChatroomPreview 
