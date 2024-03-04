@@ -1,7 +1,9 @@
 import React from 'react';
-import { Text, View, Image, StyleSheet } from 'react-native';
+import { Text, View, Image, StyleSheet, ScrollView, SafeAreaView } from 'react-native';
 import Colors from '../constants/colors';
 import Header from './Header';
+import { StatusBar } from 'expo-status-bar';
+import Constants from 'expo-constants';
 
 const ChatroomPreview = () => {
   return (
@@ -11,23 +13,37 @@ const ChatroomPreview = () => {
             <Text style={styles.previewName}>Go Dillon Audris</Text>
             <Text style={styles.previewMessage}>Baik, terima kasih infonya</Text>
         </View>
-        <Text>08:21</Text>
+        <View>
+          <Text style={styles.previewTime}>08:21</Text>
+        </View>
     </View>
   )
 }
 
 const ChatroomList = () => {
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
+      <StatusBar backgroundColor={Colors.primary1} />
       <Header title="ITX WA" />
-      <View style={styles.content}>
-        <ChatroomPreview />
-        <ChatroomPreview />
-        <ChatroomPreview />
-        <ChatroomPreview />
-        <ChatroomPreview />
-      </View>
-    </View>
+      <ScrollView>
+        <View style={styles.content}>
+          <ChatroomPreview />
+          <ChatroomPreview />
+          <ChatroomPreview />
+          <ChatroomPreview />
+          <ChatroomPreview />
+          <ChatroomPreview />
+          <ChatroomPreview />
+          <ChatroomPreview />
+          <ChatroomPreview />
+          <ChatroomPreview />
+          <ChatroomPreview />
+          <ChatroomPreview />
+          <ChatroomPreview />
+          <ChatroomPreview />
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
@@ -35,6 +51,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.white,
+    paddingTop: Constants.statusBarHeight,
   },
   content: {
     flex: 1,
@@ -42,6 +59,7 @@ const styles = StyleSheet.create({
     // justifyContent: 'top',
     // flexDirection: 'flex-start',
     padding: 24,
+    paddingTop: 24,
   },
   containerChatroom: {
     width: '100%',
@@ -65,11 +83,17 @@ const styles = StyleSheet.create({
     marginBottom: 2,
   },
   previewMessage: {
-      fontSize: 12,
-      color: Colors.black,
-      fontFamily: 'Roboto',
-      fontWeight: '400',
-    }
+    fontSize: 12,
+    color: Colors.black,
+    fontFamily: 'Roboto',
+    fontWeight: '400',
+  },
+  previewTime: {
+    fontSize: 12,
+    color: Colors.black,
+    fontFamily: 'Roboto',
+    fontWeight: '400',
+  },
 });
 
 export default ChatroomList;

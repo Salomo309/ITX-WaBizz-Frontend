@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
 // import { Ionicons } from '@expo/vector-icons';
+import Ionicons from '@expo/vector-icons/Ionicons';
 // import Icon from 'react-native-vector-icons/MaterialIcons';
 // import Icon from 'react-native-vector-icons/Ionicons';
 // import Icon2 from 'react-native-vector-icons/MaterialCommunityIcons'
@@ -15,14 +16,12 @@ const Header: React.FC<HeaderProps> = ({ title }) => {
     <View style={styles.header}>
       <Text style={styles.headerText}>ITX WABizz</Text>
       <View style={styles.rightIcons}>
-        {/* <Icon name="search" size={30} color={Colors.white} style={styles.icon}/>
-        <Icon2 name="account-circle" size={30} color={Colors.white}/> */}
-{/*           <TouchableOpacity> */}
-{/*             <Ionicons name="search" size={24} color={Colors.primary} /> */}
-{/*           </TouchableOpacity> */}
-{/*         <TouchableOpacity> */}
-{/*           <Ionicons name="person" size={24} color={Colors.primary} /> */}
-{/*         </TouchableOpacity> */}
+        <TouchableOpacity onPress={() => {}}>
+          <Ionicons name="search-outline" size={24} color={Colors.white} style={styles.icon} />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => {}}>
+          <Ionicons name="person-circle-outline" size={30} color={Colors.white} />
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -33,7 +32,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 20,
+    paddingHorizontal: 24,
     height: 60,
     backgroundColor: Colors.primary1,
   },
@@ -45,9 +44,10 @@ const styles = StyleSheet.create({
   },
   rightIcons: {
     flexDirection: 'row',
+    alignItems: 'center',
   },
   icon: {
-    marginRight: 10,
+    marginRight: 15,
   }
 });
 
