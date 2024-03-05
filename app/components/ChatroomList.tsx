@@ -5,6 +5,7 @@ import Header from './Header';
 import { StatusBar } from 'expo-status-bar';
 import Constants from 'expo-constants';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 
 interface ChatroomPreviewProps {
   profilePic: string;
@@ -50,6 +51,10 @@ const ChatroomPreview : React.FC<ChatroomPreviewProps> = ({ profilePic, name, me
 }
 
 const ChatroomList = () => {
+  // const { slug } = useLocalSearchParams();
+  // const route = useRouter();
+  // const { slug } = route. || {};
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar backgroundColor={Colors.primary1} />
@@ -93,11 +98,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.white,
-    paddingTop: Constants.statusBarHeight,
+    // paddingTop: Constants.statusBarHeight,
   },
   content: {
     flex: 1,
-    alignItems: 'center',
+    alignItems: 'flex-start',
     // justifyContent: 'top',
     // flexDirection: 'flex-start',
     padding: 24,
