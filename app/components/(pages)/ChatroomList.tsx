@@ -6,6 +6,7 @@ import { StatusBar } from 'expo-status-bar';
 import Constants from 'expo-constants';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
+import { tailwind } from 'react-native-tailwindcss';
 
 interface ChatroomPreviewProps {
   profilePic: string;
@@ -19,30 +20,32 @@ interface ChatroomPreviewProps {
 
 const ChatroomPreview : React.FC<ChatroomPreviewProps> = ({ profilePic, name, messagePreview, messageType, time, isRead, countUnread }) => {
   return (
-    <View style={styles.containerChatroom}>
-        {profilePic=='' ? (
-          <Image source={require('../../assets/images/Avatar.png')} style={styles.containerProfilePic} />
-          ) : (
-          <Image source={{uri: profilePic}} style={styles.containerProfilePic} />
-        )}
-        <View style={styles.containerNameMessage}>
-            <Text style={styles.previewName}>{name}</Text>
-            <View style={styles.containerPreviewMessage}>
+    <View className='w-full h-[50] flex-row align-start justify-center mb-[18]'>
+        <View className='h-full justify-center'>
+          {profilePic=='' ? (
+            <Image source={require('../../assets/images/Avatar.png')} className='w-[40] h-[40] rounded-full' />
+            ) : (
+              <Image source={{uri: profilePic}} className='w-[40] h-[40] rounded-full' />
+              )}
+        </View>
+        <View className='flex-1 flex-column align-start justify-center ml-[12]'>
+            <Text className='font-[Roboto] font-bold text-base text-black mb-[2]' numberOfLines={1} ellipsizeMode='tail'>{name}</Text>
+            <View className='flex-1 flex-row items-center'>
               {messageType=='photo' ? (
-                <Ionicons name="image-sharp" size={12} color={Colors.gray} style={ styles.messageTypeIcon } />
+                <Ionicons name="image-sharp" size={12} color={Colors.gray} style={{marginRight: 5}}/>
               ) : messageType=='video' ? (
-                <Ionicons name="videocam-sharp" size={12} color={Colors.gray} style={ styles.messageTypeIcon } />
+                <Ionicons name="videocam-sharp" size={12} color={Colors.gray} style={{marginRight: 5}} />
               ) : (<></>)}
-              <Text style={styles.previewMessage}>{messagePreview}</Text>
+              <Text className='font-[Roboto] font-medium text-sm text-black' numberOfLines={1} ellipsizeMode='tail'>{messagePreview}</Text>
             </View>
         </View>
         {isRead ? (
-          <Text style={styles.previewTimeDefault}>{time}</Text>
+          <Text className='font-[Roboto] font-medium text-sm text-black'>{time}</Text>
         ) : (
-          <View style={styles.containerTimeBadge}>
-            <Text style={styles.previewTimeUnread}>{time}</Text>
-            <View style={styles.unreadBadgeCircle}>
-              <Text style={styles.unreadBadgeText}>{countUnread}</Text>
+          <View className='w-auto flex-shrink-0 flex-column items-end justify-center'>
+            <Text className='font-[Roboto] font-bold text-sm text-primary-1' >{time}</Text>
+            <View className='w-6 h-6 rounded-full bg-primary-1 justify-center items-center mt-0.5'>
+              <Text className='text-white font-[Roboto] text-xs font-medium'>{countUnread}</Text>
             </View>
           </View>
         )}
@@ -56,11 +59,11 @@ const ChatroomList = () => {
   // const { slug } = route. || {};
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView className='flex-1 bg-white'>
       <StatusBar backgroundColor={Colors.primary1} />
       <Header userProfilePic="https://th.bing.com/th/id/OIP.CtpCzACf2_IjRw2YX7n20AHaJ4?rs=1&pid=ImgDetMain" />
       <ScrollView>
-        <View style={styles.content}>
+        <View className='flex-1 items-start p-[24]'>
         <ChatroomPreview 
           profilePic=''
           name="Go Dillon Audris"
@@ -94,95 +97,5 @@ const ChatroomList = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: Colors.white,
-    // paddingTop: Constants.statusBarHeight,
-  },
-  content: {
-    flex: 1,
-    alignItems: 'flex-start',
-    // justifyContent: 'top',
-    // flexDirection: 'flex-start',
-    padding: 24,
-    paddingTop: 24,
-  },
-  containerChatroom: {
-    width: '100%',
-    height: 40,
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    justifyContent: 'center',
-    marginBottom: 24,
-  },
-  containerProfilePic: {
-    width: 40,
-    height: 40,
-    borderRadius: 25
-  },
-  containerNameMessage: {
-    flex: 1,
-    flexDirection: 'column',
-    alignItems: 'flex-start',
-    justifyContent: 'center',
-    marginLeft: 12
-  },
-  previewName: {
-    fontSize: 14,
-    color: Colors.black,
-    fontFamily: 'Roboto',
-    fontWeight: '700',
-    marginBottom: 2,
-  },
-  containerPreviewMessage: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  messageTypeIcon: {
-    marginRight: 5,
-  },
-  previewMessage: {
-    fontSize: 12,
-    color: Colors.black,
-    fontFamily: 'Roboto',
-    fontWeight: '400',
-  },
-  containerTimeBadge: {
-    flex: 1,
-    flexDirection: 'column',
-    alignItems: 'flex-end',
-    justifyContent: 'center',
-    marginLeft: 12,
-  },
-  previewTimeDefault: {
-    fontSize: 12,
-    color: Colors.black,
-    fontFamily: 'Roboto',
-    fontWeight: '400',
-  },
-  previewTimeUnread: {
-    fontSize: 12,
-    color: Colors.primary1,
-    fontFamily: 'Roboto',
-    fontWeight: '700',
-  },
-  unreadBadgeCircle: {
-    width: 20,
-    height: 20,
-    borderRadius: 25,
-    backgroundColor: Colors.primary1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 3,
-  },
-  unreadBadgeText: {
-    color: Colors.white,
-    fontFamily: 'Roboto',
-    fontSize: 10,
-    fontWeight: '400',
-  },
-});
 
 export default ChatroomList;
