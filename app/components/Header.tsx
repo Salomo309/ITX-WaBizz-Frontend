@@ -31,16 +31,18 @@ const Header: React.FC<HeaderProps> = ({ userProfilePic }) => {
   };
 
   return (
-    <View style={styles.header}>
-      <Text style={styles.headerText}>ITX WABizz</Text>
-      <View style={styles.rightIcons}>
+    <View className='flex-row justify-between items-center px-[24] h-[60] bg-primary-1'>
+      <Text className='text-xl text-white font-[Roboto] font-bold'>ITX WABizz</Text>
+      <View className='flex-row items-center'>
         <TouchableOpacity onPress={() => {}}>
-          <Ionicons
-            name="search-sharp"
-            size={24}
-            color={Colors.white}
-            style={styles.icon}
-          />
+          <Ionicons name="search-sharp" size={24} color={Colors.white} style={{ marginRight: 15 }} />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => {}}>
+          {userProfilePic=='' ? (
+            <Ionicons name="person-circle-sharp" size={30} color={Colors.white} />
+          ) : (
+            <Image source={{uri: userProfilePic}} className='h-[30] w-[30] rounded-full' />
+          )}
         </TouchableOpacity>
         <Popover
           popoverStyle={styles.popoverStyle}
@@ -84,46 +86,5 @@ const Header: React.FC<HeaderProps> = ({ userProfilePic }) => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingHorizontal: 24,
-    height: 60,
-    backgroundColor: Colors.primary1,
-  },
-  headerText: {
-    fontSize: 20,
-    color: "white",
-    fontFamily: "Roboto",
-    fontWeight: "700",
-  },
-  rightIcons: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  icon: {
-    marginRight: 15,
-  },
-  containerProfilePic: {
-    height: 30,
-    width: 30,
-    borderRadius: 25,
-  },
-  popoverStyle: {
-    backgroundColor: "white",
-    borderRadius: 8,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 5,
-  },
-});
 
 export default Header;
