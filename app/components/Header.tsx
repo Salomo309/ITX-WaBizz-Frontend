@@ -37,13 +37,13 @@ const Header: React.FC<HeaderProps> = ({ userProfilePic }) => {
         <TouchableOpacity onPress={() => {}}>
           <Ionicons name="search-sharp" size={24} color={Colors.white} style={{ marginRight: 15 }} />
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => {}}>
+        {/* <TouchableOpacity onPress={() => {}}>
           {userProfilePic=='' ? (
             <Ionicons name="person-circle-sharp" size={30} color={Colors.white} />
           ) : (
             <Image source={{uri: userProfilePic}} className='h-[30] w-[30] rounded-full' />
           )}
-        </TouchableOpacity>
+        </TouchableOpacity> */}
         <Popover
           popoverStyle={styles.popoverStyle}
           isVisible={popoverVisible}
@@ -59,20 +59,20 @@ const Header: React.FC<HeaderProps> = ({ userProfilePic }) => {
               ) : (
                 <Image
                   source={{ uri: userProfilePic }}
-                  style={styles.containerProfilePic}
+                  className='w-[30] h-[30] rounded-full'
                 />
               )}
             </TouchableOpacity>
           }
         >
           <View className="w-48 px-4 py-4">
-            <TouchableOpacity className="flex flwx-row justify-center">
+            <TouchableOpacity className="flex flex-row justify-center">
               <Text className="text-base">Manage Users</Text>
             </TouchableOpacity>
             <View className="py-4" />
             <TouchableOpacity
               onPress={handlePress}
-              className="flex flwx-row justify-center"
+              className="flex flex-row justify-center"
             >
               <Text className="text-base">Logout</Text>
             </TouchableOpacity>
@@ -86,5 +86,16 @@ const Header: React.FC<HeaderProps> = ({ userProfilePic }) => {
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  popoverStyle: {
+  backgroundColor: "white",
+  borderRadius: 8,
+  shadowColor: "#000",
+  shadowOffset: {
+    width: 0,
+    height: 2,
+  },
+}})
 
 export default Header;
