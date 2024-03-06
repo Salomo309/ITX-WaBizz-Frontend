@@ -1,7 +1,7 @@
 import React from 'react';
 import { Text, View, Image, StyleSheet, ScrollView, SafeAreaView } from 'react-native';
-import Colors from '../constants/colors';
-import Header from './Header';
+import Colors from '../../constants/colors';
+import Header from '../Header';
 import { StatusBar } from 'expo-status-bar';
 import Constants from 'expo-constants';
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -21,7 +21,7 @@ const ChatroomPreview : React.FC<ChatroomPreviewProps> = ({ profilePic, name, me
   return (
     <View style={styles.containerChatroom}>
         {profilePic=='' ? (
-          <Image source={require('../assets/images/Avatar.png')} style={styles.containerProfilePic} />
+          <Image source={require('../../assets/images/Avatar.png')} style={styles.containerProfilePic} />
           ) : (
           <Image source={{uri: profilePic}} style={styles.containerProfilePic} />
         )}

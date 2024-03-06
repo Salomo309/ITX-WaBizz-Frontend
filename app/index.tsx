@@ -1,6 +1,6 @@
 import { Link } from 'expo-router';
 import { View } from 'react-native';
-import ChatroomList from './components/ChatroomList';
+import ChatroomList from './components/(pages)/ChatroomList';
 
 const Index = () => {
   return (
