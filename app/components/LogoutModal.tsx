@@ -1,14 +1,7 @@
 import React from "react";
-import {
-  Alert,
-  StyleSheet,
-  Text,
-  Pressable,
-  View,
-  Button,
-  TouchableOpacity,
-} from "react-native";
+import { Text, View, TouchableOpacity } from "react-native";
 import Modal from "react-native-modal";
+import { Link, router } from "expo-router";
 
 type ModalProps = {
   isVisible: boolean;
@@ -16,6 +9,22 @@ type ModalProps = {
 };
 
 const LogoutModal = ({ isVisible, onClose }: ModalProps) => {
+  const logOut = async () => {
+    console.log("terklik");
+    try {
+      const response = await fetch("http://localhost:8080/api/logout", {
+        method: "post",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      console.log("masuk");
+      console.log("YEAY DATA", response);
+      router.replace("/components/Login");
+    } catch (error) {
+      console.log("ADA ERROR", error);
+    }
+  };
   return (
     <View className="flex items-center justify-center">
       <Modal
@@ -38,9 +47,14 @@ const LogoutModal = ({ isVisible, onClose }: ModalProps) => {
               {/* <Button title="Cancel" onPress={onClose} color="#4B5563" /> */}
             </View>
             <View className="flex px-2">
-              <TouchableOpacity className="bg-[#1663B1] border-[#1663B1] border-2 px-4 py-2 rounded-md">
+              {/* <Link href={"/components/Login"} asChild> */}
+              <TouchableOpacity
+                onPress={logOut}
+                className="bg-[#1663B1] border-[#1663B1] border-2 px-4 py-2 rounded-md"
+              >
                 <Text className="text-base text-white">Logout</Text>
               </TouchableOpacity>
+              {/* </Link> */}
               {/* <Button title="Logout" onPress={() => {}} color="#2563EB" /> */}
             </View>
           </View>

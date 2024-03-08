@@ -12,12 +12,11 @@ const LoginPage = () => {
           "Content-Type": "application/json",
         },
       });
+      console.log("masuk");
+      console.log("YEAY DATA", response);
     } catch (error) {
       console.log("ADA ERROR", error);
     }
-    console.log("masuk");
-    const newResponse = Response.json;
-    console.log("YEAY DATA", newResponse);
   };
 
   return (
