@@ -6,7 +6,7 @@ const LoginPage = () => {
   const signIn = async () => {
     console.log("terklik");
     try {
-      const response = await fetch("http://localhost:8080/api/login", {
+      const response = await fetch("http://10.0.2.2:8080/api/login", {
         method: "post",
         headers: {
           "Content-Type": "application/json",

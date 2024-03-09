@@ -12,7 +12,7 @@ const LogoutModal = ({ isVisible, onClose }: ModalProps) => {
   const logOut = async () => {
     console.log("terklik");
     try {
-      const response = await fetch("http://localhost:8080/api/logout", {
+      const response = await fetch("http://10.0.2.2:8080/api/logout", {
         method: "post",
         headers: {
           "Content-Type": "application/json",
