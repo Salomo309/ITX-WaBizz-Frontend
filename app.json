@@ -1,6 +1,7 @@
 {
   "expo": {
     "name": "ITX_WABizz",
+    "scheme": "ITX_WABizz",
     "slug": "ITX_WABizz",
     "version": "1.0.0",
     "orientation": "portrait",
