@@ -8,6 +8,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { tailwind } from 'react-native-tailwindcss';
 import axios from 'axios';
+import ApiUrl from '../../constants/api';
 
 interface ChatroomPreviewProps {
   id: number;
@@ -16,7 +17,7 @@ interface ChatroomPreviewProps {
   messagePreview: string;
   messageType: string; // text, photo, video
   time: string;
-  isRead: boolean;
+  isRead: boolean | null;
   countUnread: string;
 }
 
@@ -41,15 +42,15 @@ const ChatroomPreview : React.FC<ChatroomPreviewProps> = ({ profilePic, name, me
               <Text className='font-[Roboto] font-medium text-sm text-black' numberOfLines={1} ellipsizeMode='tail'>{messagePreview}</Text>
             </View>
         </View>
-        {isRead === false || isRead === null ? (
+        {isRead === null || isRead === true ? (
+          <Text className='font-[Roboto] font-medium text-sm text-black'>{formatTime(time)}</Text>
+        ) : (
           <View className='w-auto flex-shrink-0 flex-column items-end justify-center'>
             <Text className='font-[Roboto] font-bold text-sm text-primary-1'>{formatTime(time)}</Text>
             <View className='w-6 h-6 rounded-full bg-primary-1 justify-center items-center mt-0.5'>
               <Text className='text-white font-[Roboto] text-xs font-medium'>{countUnread}</Text>
             </View>
           </View>
-        ) : (
-          <Text className='font-[Roboto] font-medium text-sm text-black'>{formatTime(time)}</Text>
         )}
     </View>
   )
@@ -90,7 +91,8 @@ const ChatroomList = () => {
     const fetchChatrooms = async () => {
       try {
         // const response = await fetch("http://10.0.2.2:8080/api/chatlist", {
-        const response = await fetch("https://ea2e-36-79-175-119.ngrok-free.app/api/chatlist", {
+        const response = await fetch(ApiUrl.concat("/chatlist"), {
+        // const response = await fetch("https://d0ea-36-79-175-119.ngrok-free.app/api/chatlist", {
           method: "get",
           headers: {
             "Content-Type": "application/json",
