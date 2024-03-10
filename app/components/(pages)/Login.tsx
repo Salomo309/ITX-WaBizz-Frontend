@@ -1,13 +1,40 @@
 import { Text, TouchableOpacity, View, Image, Linking } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { useEffect, useState } from "react";
+import * as WebBrowser from "expo-web-browser";
+import { makeRedirectUri } from "expo-auth-session";
+
+WebBrowser.maybeCompleteAuthSession();
 
 const LoginPage = () => {
+  const [userData, setUserData] = useState(null);
+  const redirectUri = makeRedirectUri();
+
+  useEffect(() => {
+    // Listen for changes in the URL to handle the OAuth callback
+    const subscription = Linking.addEventListener("url", (event) => {
+      const { url } = event;
+      if (
+        url.includes(
+          "https://30c9-36-79-175-119.ngrok-free.app/api/auth/google/callback?state=test&code=4%2F0AeaYSHBdVjA6Y_iGBwAYHD7VZW_OAmJhMC4ReYNPE4r0Ki8GJKp8rnNQjeSrn7CRLhaQ-A&scope=email+profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile+openid&authuser=0&hd=std.stei.itb.ac.id&prompt=none"
+        )
+      ) {
+        // Your logic to handle the callback and fetch user data
+        // Make sure to replace this with your actual logic to process the callback URL
+        console.log("OAuth callback URL:", url);
+      }
+    });
+
+    return () => {
+      // Remove the event listener when the component unmounts
+      subscription.remove();
+    };
+  }, []);
+
   const signIn = async () => {
-    // console.log("terklik");
     try {
       const response = await fetch(
-        "https://ea2e-36-79-175-119.ngrok-free.app/api/login",
+        "https://30c9-36-79-175-119.ngrok-free.app/api/auth/login",
         {
           method: "post",
           headers: {
@@ -16,22 +43,13 @@ const LoginPage = () => {
           },
         }
       );
-      // console.log(response);
-
       if (response.ok) {
-        // Pastikan responsnya ok sebelum melanjutkan
-        console.log(response);
-        const data = await response.json();
-        if (data && data.url) {
-          Linking.openURL(data.url);
-        }
-        // console.log("return");
-        // console.log(response);
+        console.log(userData);
+        // const jsonResponse = await response.json();
 
-        // const jsonResponse = await response.json(); // Tambahkan `await` untuk menunggu promise selesai
-        // console.log("masuk");
-        // console.log(jsonResponse);
-        // console.log("YEAY DATA", jsonResponse, response.status); // jsonResponse sekarang berisi objek JSON yang diharapkan
+        console.log("HASIL");
+        console.log(response.url);
+        await WebBrowser.openBrowserAsync(response.url);
       } else {
         console.log("Gagal mengambil data, status:", response.status);
       }

@@ -10,9 +10,9 @@ type ModalProps = {
 
 const LogoutModal = ({ isVisible, onClose }: ModalProps) => {
   const logOut = async () => {
-    console.log("terklik");
+    // console.log("terklik");
     try {
-      const response = await fetch("http://10.0.2.2:8080/api/logout", {
+      const response = await fetch("https://30c9-36-79-175-119.ngrok-free.app/api/auth/logout", {
         method: "post",
         headers: {
           "Content-Type": "application/json",

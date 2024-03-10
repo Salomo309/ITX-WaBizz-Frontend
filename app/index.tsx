@@ -9,7 +9,7 @@ const Index = () => {
 
   const checkLoginStatus = async () => {
     // Try to login
-    setLoggedIn(false);
+    setLoggedIn(true);
   };
 
   useEffect(() => {
