@@ -41,19 +41,43 @@ const ChatroomPreview : React.FC<ChatroomPreviewProps> = ({ profilePic, name, me
               <Text className='font-[Roboto] font-medium text-sm text-black' numberOfLines={1} ellipsizeMode='tail'>{messagePreview}</Text>
             </View>
         </View>
-        {isRead ? (
-          <Text className='font-[Roboto] font-medium text-sm text-black'>{time}</Text>
-        ) : (
+        {isRead === false || isRead === null ? (
           <View className='w-auto flex-shrink-0 flex-column items-end justify-center'>
-            <Text className='font-[Roboto] font-bold text-sm text-primary-1' >{time}</Text>
+            <Text className='font-[Roboto] font-bold text-sm text-primary-1'>{formatTime(time)}</Text>
             <View className='w-6 h-6 rounded-full bg-primary-1 justify-center items-center mt-0.5'>
               <Text className='text-white font-[Roboto] text-xs font-medium'>{countUnread}</Text>
             </View>
           </View>
+        ) : (
+          <Text className='font-[Roboto] font-medium text-sm text-black'>{formatTime(time)}</Text>
         )}
     </View>
   )
 }
+
+// Format timestamp (if today, only show the time. if yesterday, show yesterday, else show only the date)
+const formatTime = (timestamp: string | number) => {
+  const date = new Date(timestamp);
+  const now = new Date();
+
+  const isYesterday = (date: Date) => {
+    const yesterday = new Date(now);
+    yesterday.setDate(now.getDate() - 1);
+    return date.toDateString() === yesterday.toDateString();
+  };
+
+  const isToday = (date: Date) => {
+    return date.toDateString() === now.toDateString();
+  };
+
+  if (isToday(date)) {
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  } else if (isYesterday(date)) {
+    return 'Yesterday';
+  } else {
+    return date.toLocaleDateString([], { year: 'numeric', month: '2-digit', day: '2-digit' });
+  }
+};
 
 const ChatroomList = () => {
   // const { slug } = useLocalSearchParams();
@@ -103,6 +127,7 @@ const ChatroomList = () => {
 
     fetchChatrooms();
   }, []);
+  
 
   return (
     <SafeAreaView className='flex-1 bg-white'>
@@ -128,8 +153,8 @@ const ChatroomList = () => {
           name="Go Dillon Audris"
           messagePreview="Baik, terima kasih infonya"
           messageType='text'
-          time="08:21"
-          isRead={false}
+          time="2024-03-09 13:33:12"
+          isRead={true}
           countUnread="25"
         />
         {/* <ChatroomPreview 
