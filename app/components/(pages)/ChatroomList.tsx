@@ -65,7 +65,8 @@ const ChatroomList = () => {
   useEffect(() => {
     const fetchChatrooms = async () => {
       try {
-        const response = await fetch("http://10.0.2.2:8080/api/chatlist", {
+        // const response = await fetch("http://10.0.2.2:8080/api/chatlist", {
+        const response = await fetch("https://ea2e-36-79-175-119.ngrok-free.app/api/chatlist", {
           method: "get",
           headers: {
             "Content-Type": "application/json",
@@ -78,11 +79,20 @@ const ChatroomList = () => {
     
         const data = await response.json(); // Parse response body as JSON
         console.log('Chatroom data: ', data);
+
+        const chatList = data.ChatList;
         
         // Assuming response data is an array, you can map over it and setChatrooms
-        const chatroomsWithId = data.map((chatroom: any, index: number) => ({
+        const chatroomsWithId = chatList.map((chatroom: any, index: number) => ({
           id: index + 1,
-          ...chatroom
+          // ...chatroom
+          profilePic: '',
+          name: chatroom.customerName,
+          messagePreview: chatroom.content,
+          messageType: chatroom.messageType,
+          time: chatroom.timendate,
+          isRead: chatroom.isRead || false,
+          countUnread: 0
         }));
     
         setChatrooms(chatroomsWithId);
@@ -100,7 +110,7 @@ const ChatroomList = () => {
       <Header userProfilePic="https://th.bing.com/th/id/OIP.CtpCzACf2_IjRw2YX7n20AHaJ4?rs=1&pid=ImgDetMain" />
       <ScrollView>
         <View className='flex-1 items-start p-[24]'>
-          {chatrooms.map((chatroom: ChatroomPreviewProps) => (
+          {chatrooms && chatrooms.map((chatroom: ChatroomPreviewProps) => (
             <ChatroomPreview
               id={chatroom.id}
               profilePic={chatroom.profilePic}

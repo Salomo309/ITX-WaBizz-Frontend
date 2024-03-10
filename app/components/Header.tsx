@@ -59,7 +59,7 @@ const Header: React.FC<HeaderProps> = ({ userProfilePic }) => {
               ) : (
                 <Image
                   source={{ uri: userProfilePic }}
-                  style={styles.containerProfilePic}
+                  className='w-[30] h-[30] rounded-full'
                 />
               )}
             </TouchableOpacity>
@@ -86,5 +86,16 @@ const Header: React.FC<HeaderProps> = ({ userProfilePic }) => {
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  popoverStyle: {
+  backgroundColor: "white",
+  borderRadius: 8,
+  shadowColor: "#000",
+  shadowOffset: {
+    width: 0,
+    height: 2,
+  },
+}})
 
 export default Header;
