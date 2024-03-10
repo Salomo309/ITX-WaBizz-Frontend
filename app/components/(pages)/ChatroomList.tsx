@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Text, View, Image, StyleSheet, ScrollView, SafeAreaView } from 'react-native';
 import Colors from '../../constants/colors';
 import Header from '../Header';
@@ -7,8 +7,10 @@ import Constants from 'expo-constants';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { tailwind } from 'react-native-tailwindcss';
+import axios from 'axios';
 
 interface ChatroomPreviewProps {
+  id: number;
   profilePic: string;
   name: string;
   messagePreview: string;
@@ -58,14 +60,61 @@ const ChatroomList = () => {
   // const route = useRouter();
   // const { slug } = route. || {};
 
+  const [chatrooms, setChatrooms] = useState<ChatroomPreviewProps[]>([]);
+
+  useEffect(() => {
+    const fetchChatrooms = async () => {
+      try {
+        const response = await fetch("http://10.0.2.2:8080/api/chatlist", {
+          method: "get",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+    
+        const data = await response.json(); // Parse response body as JSON
+        console.log('Chatroom data: ', data);
+        
+        // Assuming response data is an array, you can map over it and setChatrooms
+        const chatroomsWithId = data.map((chatroom: any, index: number) => ({
+          id: index + 1,
+          ...chatroom
+        }));
+    
+        setChatrooms(chatroomsWithId);
+      } catch (error) {
+        console.error('Error fetching chatrooms: ', error);
+      }
+    };    
+
+    fetchChatrooms();
+  }, []);
+
   return (
     <SafeAreaView className='flex-1 bg-white'>
       <StatusBar backgroundColor={Colors.primary1} />
       <Header userProfilePic="https://th.bing.com/th/id/OIP.CtpCzACf2_IjRw2YX7n20AHaJ4?rs=1&pid=ImgDetMain" />
       <ScrollView>
         <View className='flex-1 items-start p-[24]'>
+          {chatrooms.map((chatroom: ChatroomPreviewProps) => (
+            <ChatroomPreview
+              id={chatroom.id}
+              profilePic={chatroom.profilePic}
+              name={chatroom.name}
+              messagePreview={chatroom.messagePreview}
+              messageType={chatroom.messageType}
+              time={chatroom.time}
+              isRead={chatroom.isRead}
+              countUnread={chatroom.countUnread}
+            />
+          ))}
         <ChatroomPreview 
-          profilePic=''
+          id={0}
+          profilePic='https://www.gluwee.com/wp-content/uploads/2021/01/olivia-rodrigo_cover.jpg'
           name="Go Dillon Audris"
           messagePreview="Baik, terima kasih infonya"
           messageType='text'
@@ -73,7 +122,7 @@ const ChatroomList = () => {
           isRead={false}
           countUnread="25"
         />
-        <ChatroomPreview 
+        {/* <ChatroomPreview 
           profilePic='https://raptv.com/wp-content/uploads/taylor-swift-variety-facetime-768x432.jpg'
           name="Arleen"
           messagePreview="Sama2..."
@@ -90,7 +139,7 @@ const ChatroomList = () => {
           time="25/02/2024"
           isRead={false}
           countUnread="2"
-        />
+        /> */}
         </View>
       </ScrollView>
     </SafeAreaView>
