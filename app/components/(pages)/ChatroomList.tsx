@@ -17,11 +17,12 @@ interface ChatroomPreviewProps {
   messagePreview: string;
   messageType: string; // text, photo, video
   time: string;
-  isRead: boolean | null;
+  isRead: string;
+  statusRead: string;
   countUnread: string;
 }
 
-const ChatroomPreview : React.FC<ChatroomPreviewProps> = ({ profilePic, name, messagePreview, messageType, time, isRead, countUnread }) => {
+const ChatroomPreview : React.FC<ChatroomPreviewProps> = ({ profilePic, name, messagePreview, messageType, time, isRead, statusRead, countUnread }) => {
   return (
     <View className='w-full h-[50] flex-row align-start justify-center mb-[18]'>
         <View className='h-full justify-center'>
@@ -32,17 +33,24 @@ const ChatroomPreview : React.FC<ChatroomPreviewProps> = ({ profilePic, name, me
               )}
         </View>
         <View className='flex-1 flex-column align-start justify-center ml-[12]'>
-            <Text className='font-[Roboto] font-bold text-base text-black mb-[2]' numberOfLines={1} ellipsizeMode='tail'>{name}</Text>
+            <Text className='w-[85%] font-[Roboto] font-bold text-base text-black mb-[2]' numberOfLines={1} ellipsizeMode='tail'>{name}</Text>
             <View className='flex-1 flex-row items-center'>
-              {messageType=='photo' ? (
-                <Ionicons name="image-sharp" size={12} color={Colors.gray} style={{marginRight: 5}}/>
-              ) : messageType=='video' ? (
-                <Ionicons name="videocam-sharp" size={12} color={Colors.gray} style={{marginRight: 5}} />
+              {statusRead=='sent' ? (
+                <Ionicons name="checkmark" size={16} color={Colors.gray} style={{marginRight: 5}}/>
+              ) : statusRead=='delivered' ? (
+                <Image source={require('../../assets/icons/double-tick-delivered.png')} className='w-[15] h-[15] mr-[5]' />
+              ) : statusRead=='read' ? (
+                <Image source={require('../../assets/icons/double-tick-read.png')} className='w-[15] h-[15] mr-[5]' />
               ) : (<></>)}
-              <Text className='font-[Roboto] font-medium text-sm text-black' numberOfLines={1} ellipsizeMode='tail'>{messagePreview}</Text>
+              {messageType=='photo' ? (
+                <Ionicons name="image-sharp" size={14} color={Colors.gray} style={{marginRight: 5}}/>
+              ) : messageType=='video' ? (
+                <Ionicons name="videocam-sharp" size={14} color={Colors.gray} style={{marginRight: 5}} />
+              ) : (<></>)}
+              <Text className='w-[100%] font-[Roboto] font-medium text-sm text-black' numberOfLines={1} ellipsizeMode='tail'>{messagePreview}</Text>
             </View>
         </View>
-        {isRead === null || isRead === true ? (
+        {isRead === "null" || isRead === "1" ? (
           <Text className='font-[Roboto] font-medium text-sm text-black'>{formatTime(time)}</Text>
         ) : (
           <View className='w-auto flex-shrink-0 flex-column items-end justify-center'>
@@ -118,7 +126,8 @@ const ChatroomList = () => {
           messageType: chatroom.messageType,
           time: chatroom.timendate,
           isRead: chatroom.isRead || false,
-          countUnread: 0
+          statusRead: chatroom.statusRead,
+          countUnread: chatroom.countUnread
         }));
     
         setChatrooms(chatroomsWithId);
@@ -137,6 +146,30 @@ const ChatroomList = () => {
       <Header userProfilePic="https://th.bing.com/th/id/OIP.CtpCzACf2_IjRw2YX7n20AHaJ4?rs=1&pid=ImgDetMain" />
       <ScrollView>
         <View className='flex-1 items-start p-[24]'>
+          {/** dummy data */}
+          <ChatroomPreview 
+            id={0}
+            profilePic='https://www.gluwee.com/wp-content/uploads/2021/01/olivia-rodrigo_cover.jpg'
+            name="Arleen Chrysantha Gunardi (Customer)"
+            messagePreview="Terima kasih kak"
+            messageType='text'
+            time="2024-03-11 11:33:12"
+            isRead="null"
+            statusRead="sent"
+            countUnread="25"
+          />
+          <ChatroomPreview 
+            id={0}
+            profilePic='https://0.soompi.io/wp-content/uploads/2019/01/14000832/Soobin1-540x540.jpg'
+            name="Go Dillon Audris"
+            messagePreview="Baik kak, akan segera kami proses lebih lanjut ya"
+            messageType='text'
+            time="2024-03-10 13:33:12"
+            isRead="null"
+            statusRead="read"
+            countUnread="25"
+          />
+
           {chatrooms && chatrooms.map((chatroom: ChatroomPreviewProps) => (
             <ChatroomPreview
               id={chatroom.id}
@@ -146,37 +179,10 @@ const ChatroomList = () => {
               messageType={chatroom.messageType}
               time={chatroom.time}
               isRead={chatroom.isRead}
+              statusRead={chatroom.statusRead}
               countUnread={chatroom.countUnread}
             />
           ))}
-        <ChatroomPreview 
-          id={0}
-          profilePic='https://www.gluwee.com/wp-content/uploads/2021/01/olivia-rodrigo_cover.jpg'
-          name="Go Dillon Audris"
-          messagePreview="Baik, terima kasih infonya"
-          messageType='text'
-          time="2024-03-09 13:33:12"
-          isRead={true}
-          countUnread="25"
-        />
-        {/* <ChatroomPreview 
-          profilePic='https://raptv.com/wp-content/uploads/taylor-swift-variety-facetime-768x432.jpg'
-          name="Arleen"
-          messagePreview="Sama2..."
-          messageType='photo'
-          time="Yesterday"
-          isRead={true}
-          countUnread="0"
-        />
-        <ChatroomPreview 
-          profilePic='https://www.gluwee.com/wp-content/uploads/2021/01/olivia-rodrigo_cover.jpg'
-          name="Margaretha Olivia"
-          messagePreview="Ini videonya kak"
-          messageType='video'
-          time="25/02/2024"
-          isRead={false}
-          countUnread="2"
-        /> */}
         </View>
       </ScrollView>
     </SafeAreaView>
