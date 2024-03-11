@@ -68,10 +68,12 @@ const LoginPage = () => {
         console.log("HASIL");
         console.log(response.url);
         console.log("HASIL TOKEN");
-        console.log(response.url.token);
+        console.log(response.url);
         let result = await WebBrowser.openAuthSessionAsync(response.url);
-        router.replace("/components/ChatroomList")  
+        console.log(result);
+        router.replace("/components/ChatroomList");
         // console.log("RESULT");
+        // console.log(result);
         // console.log(result);
       } else {
         console.log("Gagal mengambil data, status:", response.status);
