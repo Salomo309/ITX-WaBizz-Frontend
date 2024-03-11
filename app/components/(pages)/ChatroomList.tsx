@@ -111,15 +111,13 @@ const ChatroomList = () => {
           throw new Error('Network response was not ok');
         }
     
-        const data = await response.json(); // Parse response body as JSON
+        const data = await response.json(); 
         console.log('Chatroom data: ', data);
 
         const chatList = data.ChatList;
         
-        // Assuming response data is an array, you can map over it and setChatrooms
         const chatroomsWithId = chatList.map((chatroom: any, index: number) => ({
           id: index + 1,
-          // ...chatroom
           profilePic: '',
           name: chatroom.customerName,
           messagePreview: chatroom.content,
