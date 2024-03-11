@@ -3,6 +3,7 @@ import { Text, View, TouchableOpacity } from "react-native";
 import Modal from "react-native-modal";
 import { Link, router } from "expo-router";
 
+
 type ModalProps = {
   isVisible: boolean;
   onClose: () => void;
@@ -12,7 +13,7 @@ const LogoutModal = ({ isVisible, onClose }: ModalProps) => {
   const logOut = async () => {
     // console.log("terklik");
     try {
-      const response = await fetch("https://30c9-36-79-175-119.ngrok-free.app/api/auth/logout", {
+      const response = await fetch("https://golden-worthy-basilisk.ngrok-free.app/api/auth/logout", {
         method: "post",
         headers: {
           "Content-Type": "application/json",

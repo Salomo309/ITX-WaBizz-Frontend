@@ -1,40 +1,60 @@
-import { Text, TouchableOpacity, View, Image, Linking } from "react-native";
+import React, { useEffect, useState } from "react";
+import { Text, TouchableOpacity, View, Image } from "react-native";
 import { StatusBar } from "expo-status-bar";
-import { useEffect, useState } from "react";
 import * as WebBrowser from "expo-web-browser";
-import { makeRedirectUri } from "expo-auth-session";
+import * as Linking from "expo-linking";
+import {
+  makeRedirectUri,
+  ResponseType,
+  useAuthRequest,
+} from "expo-auth-session";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { router } from "expo-router";
 
-WebBrowser.maybeCompleteAuthSession();
+// WebBrowser.maybeCompleteAuthSession();
+
+interface UserData {
+  google_id: string;
+  token: string;
+  email: string;
+  name: string;
+  picture: string;
+  admin: boolean;
+}
 
 const LoginPage = () => {
-  const [userData, setUserData] = useState(null);
-  const redirectUri = makeRedirectUri();
+  const [userData, setUserData] = useState<UserData | null>(null);
+  const [token, setToken] = useState("");
+  const [userInfo, setUserInfo] = useState(null);
 
-  useEffect(() => {
-    // Listen for changes in the URL to handle the OAuth callback
-    const subscription = Linking.addEventListener("url", (event) => {
-      const { url } = event;
-      if (
-        url.includes(
-          "https://30c9-36-79-175-119.ngrok-free.app/api/auth/google/callback?state=test&code=4%2F0AeaYSHBdVjA6Y_iGBwAYHD7VZW_OAmJhMC4ReYNPE4r0Ki8GJKp8rnNQjeSrn7CRLhaQ-A&scope=email+profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile+openid&authuser=0&hd=std.stei.itb.ac.id&prompt=none"
-        )
-      ) {
-        // Your logic to handle the callback and fetch user data
-        // Make sure to replace this with your actual logic to process the callback URL
-        console.log("OAuth callback URL:", url);
-      }
-    });
+  const getLocalUser = async () => {
+    const data = await AsyncStorage.getItem("@user");
+    if (!data) return null;
+    return JSON.parse(data);
+  };
 
-    return () => {
-      // Remove the event listener when the component unmounts
-      subscription.remove();
-    };
-  }, []);
+  const getUserInfo = async (token: string) => {
+    if (!token) return;
+    try {
+      const response = await fetch(
+        "https://www.googleapis.com/userinfo/v2/me",
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      const user = await response.json();
+      await AsyncStorage.setItem("@user", JSON.stringify(user));
+      setUserInfo(user);
+    } catch (error) {
+      // Add your own error handler here
+    }
+  };
 
   const signIn = async () => {
     try {
       const response = await fetch(
-        "https://30c9-36-79-175-119.ngrok-free.app/api/auth/login",
+        "https://golden-worthy-basilisk.ngrok-free.app/api/auth/login",
         {
           method: "post",
           headers: {
@@ -43,13 +63,14 @@ const LoginPage = () => {
           },
         }
       );
+      console.log(response);
       if (response.ok) {
-        console.log(userData);
-        // const jsonResponse = await response.json();
-
         console.log("HASIL");
         console.log(response.url);
-        await WebBrowser.openBrowserAsync(response.url);
+        let result = await WebBrowser.openAuthSessionAsync(response.url);
+        router.replace("/components/ChatroomList")
+        // console.log("RESULT");
+        // console.log(result);
       } else {
         console.log("Gagal mengambil data, status:", response.status);
       }

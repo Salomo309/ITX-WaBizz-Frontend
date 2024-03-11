@@ -1,5 +1,6 @@
 {
   "expo": {
+    "scheme": "ITX_WABizz",
     "name": "ITX_WABizz",
     "slug": "ITX_WABizz",
     "version": "1.0.0",
@@ -16,9 +17,11 @@
     },
     "assetBundlePatterns": ["**/*"],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.ITX_WABizz"
     },
     "android": {
+      "package": "com.ITX_WABizz",
       "adaptiveIcon": {
         "foregroundImage": "./app/assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
