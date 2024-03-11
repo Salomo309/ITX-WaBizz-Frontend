@@ -157,7 +157,7 @@ const ChatroomList = () => {
             countUnread="25"
           />
           <ChatroomPreview 
-            id={0}
+            id={1}
             profilePic='https://0.soompi.io/wp-content/uploads/2019/01/14000832/Soobin1-540x540.jpg'
             name="Go Dillon Audris"
             messagePreview="Baik kak, akan segera kami proses lebih lanjut ya"
