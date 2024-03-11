@@ -67,8 +67,10 @@ const LoginPage = () => {
       if (response.ok) {
         console.log("HASIL");
         console.log(response.url);
+        console.log("HASIL TOKEN");
+        console.log(response.url.token);
         let result = await WebBrowser.openAuthSessionAsync(response.url);
-        router.replace("/components/ChatroomList")
+        router.replace("/components/ChatroomList")  
         // console.log("RESULT");
         // console.log(result);
       } else {
