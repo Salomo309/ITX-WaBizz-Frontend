@@ -8,11 +8,7 @@ import {
   Button,
   Modal,
 } from "react-native";
-// import { Ionicons } from '@expo/vector-icons';
-import Ionicons from "@expo/vector-icons/Ionicons";
-// import Icon from 'react-native-vector-icons/MaterialIcons';
-// import Icon from 'react-native-vector-icons/Ionicons';
-// import Icon2 from 'react-native-vector-icons/MaterialCommunityIcons'
+// import Ionicons from "react-native-vector-icons/Ionicons";
 import Colors from "../constants/colors";
 import Popover from "react-native-popover-view";
 import LogoutModal from "./LogoutModal";
@@ -31,20 +27,34 @@ const Header: React.FC<HeaderProps> = ({ userProfilePic }) => {
   };
 
   return (
-    <View className='flex-row justify-between items-center px-[24] h-[60] bg-primary-1'>
-      <Text className='text-xl text-white font-[Roboto] font-bold'>ITX WABizz</Text>
-      <View className='flex-row items-center'>
+    <View className="flex-row justify-between items-center px-[24] h-[60] bg-primary-1">
+      <Text className="text-xl text-white font-[Roboto] font-bold">
+        ITX WABizz
+      </Text>
+      <View className="flex-row items-center">
         <TouchableOpacity onPress={() => {}}>
-          <Ionicons name="search-sharp" size={24} color={Colors.white} style={{ marginRight: 15 }} />
+          {/* <Ionicons
+            name="search-sharp"
+            size={24}
+            color={Colors.white}
+            style={{ marginRight: 15 }}
+          /> */}
         </TouchableOpacity>
         {/* <TouchableOpacity onPress={() => {}}>
-          {userProfilePic=='' ? (
-            <Ionicons name="person-circle-sharp" size={30} color={Colors.white} />
+          {userProfilePic == "" ? (
+            <Ionicons
+              name="person-circle-sharp"
+              size={30}
+              color={Colors.white}
+            />
           ) : (
-            <Image source={{uri: userProfilePic}} className='h-[30] w-[30] rounded-full' />
+            <Image
+              source={{ uri: userProfilePic }}
+              className="h-[30] w-[30] rounded-full"
+            />
           )}
         </TouchableOpacity> */}
-        <Popover
+        {/* <Popover
           popoverStyle={styles.popoverStyle}
           isVisible={popoverVisible}
           onRequestClose={() => setPopoverVisible(false)}
@@ -59,7 +69,7 @@ const Header: React.FC<HeaderProps> = ({ userProfilePic }) => {
               ) : (
                 <Image
                   source={{ uri: userProfilePic }}
-                  className='w-[30] h-[30] rounded-full'
+                  className="w-[30] h-[30] rounded-full"
                 />
               )}
             </TouchableOpacity>
@@ -77,7 +87,7 @@ const Header: React.FC<HeaderProps> = ({ userProfilePic }) => {
               <Text className="text-base">Logout</Text>
             </TouchableOpacity>
           </View>
-        </Popover>
+        </Popover> */}
         <LogoutModal
           isVisible={modalVisible}
           onClose={() => setModalVisible(false)}
@@ -89,13 +99,14 @@ const Header: React.FC<HeaderProps> = ({ userProfilePic }) => {
 
 const styles = StyleSheet.create({
   popoverStyle: {
-  backgroundColor: "white",
-  borderRadius: 8,
-  shadowColor: "#000",
-  shadowOffset: {
-    width: 0,
-    height: 2,
+    backgroundColor: "white",
+    borderRadius: 8,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
   },
-}})
+});
 
 export default Header;
