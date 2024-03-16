@@ -16,7 +16,7 @@ export default function App() {
 
   const checkLoginStatus = async () => {
     // Try to login
-    setLoggedIn(false);
+    setLoggedIn(true);
   };
 
   useEffect(() => {
