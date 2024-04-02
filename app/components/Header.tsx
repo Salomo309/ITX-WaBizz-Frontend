@@ -7,8 +7,9 @@ import {
   Image,
   Button,
   Modal,
+  TextInput,
 } from "react-native";
-// import Ionicons from "react-native-vector-icons/Ionicons";
+import Ionicons from "react-native-vector-icons/Ionicons";
 import Colors from "../constants/colors";
 import Popover from "react-native-popover-view";
 import LogoutModal from "./LogoutModal";
@@ -20,6 +21,17 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({ userProfilePic }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [popoverVisible, setPopoverVisible] = useState(false);
+  const [searchVisible, setSearchVisible] = useState(false);
+  const [searchText, setSearchText] = useState("");
+
+  const toggleSearch = () => {
+    setSearchVisible(!searchVisible);
+  };
+
+  const handleBack = () => {
+    setSearchVisible(false);
+    // Additional logic can be added here if needed
+  };
 
   const handlePress = () => {
     setPopoverVisible(false);
@@ -27,77 +39,107 @@ const Header: React.FC<HeaderProps> = ({ userProfilePic }) => {
   };
 
   return (
-    <View className="flex-row justify-between items-center px-[24] h-[60] bg-primary-1">
-      <Text className="text-xl text-white font-[Roboto] font-bold">
-        ITX WABizz
-      </Text>
-      <View className="flex-row items-center">
-        <TouchableOpacity onPress={() => {}}>
-          {/* <Ionicons
+    <View style={styles.container}>
+      {!searchVisible && (
+        <Text style={styles.title}>ITX WABizz</Text>
+      )}
+      {!searchVisible && (
+        <TouchableOpacity onPress={toggleSearch}>
+          <Ionicons
             name="search-sharp"
             size={24}
             color={Colors.white}
-            style={{ marginRight: 15 }}
-          /> */}
+            style={styles.icon}
+          />
         </TouchableOpacity>
-        {/* <TouchableOpacity onPress={() => {}}>
-          {userProfilePic == "" ? (
-            <Ionicons
-              name="person-circle-sharp"
-              size={30}
-              color={Colors.white}
-            />
-          ) : (
-            <Image
-              source={{ uri: userProfilePic }}
-              className="h-[30] w-[30] rounded-full"
-            />
-          )}
-        </TouchableOpacity> */}
-        {/* <Popover
-          popoverStyle={styles.popoverStyle}
-          isVisible={popoverVisible}
-          onRequestClose={() => setPopoverVisible(false)}
-          from={
-            <TouchableOpacity onPress={() => setPopoverVisible(true)}>
-              {userProfilePic == "" ? (
-                <Ionicons
-                  name="person-circle-sharp"
-                  size={30}
-                  color={Colors.white}
-                />
-              ) : (
-                <Image
-                  source={{ uri: userProfilePic }}
-                  className="w-[30] h-[30] rounded-full"
-                />
-              )}
-            </TouchableOpacity>
-          }
-        >
-          <View className="w-48 px-4 py-4">
-            <TouchableOpacity className="flex flex-row justify-center">
-              <Text className="text-base">Manage Users</Text>
-            </TouchableOpacity>
-            <View className="py-4" />
-            <TouchableOpacity
-              onPress={handlePress}
-              className="flex flex-row justify-center"
-            >
-              <Text className="text-base">Logout</Text>
-            </TouchableOpacity>
-          </View>
-        </Popover> */}
-        <LogoutModal
-          isVisible={modalVisible}
-          onClose={() => setModalVisible(false)}
+      )}
+      {searchVisible && (
+        <TouchableOpacity onPress={handleBack}>
+          <Ionicons
+            name="arrow-back"
+            size={24}
+            color={Colors.white}
+            style={styles.icon}
+          />
+        </TouchableOpacity>
+      )}
+      {searchVisible && (
+        <TextInput
+          style={styles.searchInput}
+          placeholder="Search"
+          value={searchText}
+          onChangeText={(text) => setSearchText(text)}
         />
-      </View>
+      )}
+      <TouchableOpacity onPress={() => setPopoverVisible(true)}>
+        {userProfilePic == "" ? (
+          <Ionicons
+            name="person-circle-sharp"
+            size={30}
+            color={Colors.white}
+            style={styles.icon}
+          />
+        ) : (
+          <Image
+            source={{ uri: userProfilePic }}
+            style={styles.profileImage}
+          />
+        )}
+      </TouchableOpacity>
+      <Popover
+        popoverStyle={styles.popoverStyle}
+        isVisible={popoverVisible}
+        onRequestClose={() => setPopoverVisible(false)}
+        from={<View />} // You can replace this with the icon or image component
+      >
+        <View style={styles.popoverContent}>
+          <TouchableOpacity style={styles.popoverItem} onPress={handlePress}>
+            <Text style={styles.popoverText}>Manage Users</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.popoverItem} onPress={() => {}}>
+            <Text style={styles.popoverText}>Logout</Text>
+          </TouchableOpacity>
+        </View>
+      </Popover>
+      <LogoutModal
+        isVisible={modalVisible}
+        onClose={() => setModalVisible(false)}
+      />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 24,
+    height: 60,
+    backgroundColor: Colors.primary1,
+  },
+  title: {
+    fontSize: 20,
+    color: Colors.white,
+    fontWeight: "bold",
+    marginRight: "auto",
+  },
+  icon: {
+    marginRight: 15,
+  },
+  searchInput: {
+    flex: 1,
+    height: 40,
+    backgroundColor: Colors.white,
+    borderRadius: 20,
+    paddingHorizontal: 15,
+    marginRight: 15,
+  },
+  profileImage: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    marginLeft: "auto",
+  },
   popoverStyle: {
     backgroundColor: "white",
     borderRadius: 8,
@@ -106,6 +148,16 @@ const styles = StyleSheet.create({
       width: 0,
       height: 2,
     },
+  },
+  popoverContent: {
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+  },
+  popoverItem: {
+    paddingVertical: 10,
+  },
+  popoverText: {
+    fontSize: 16,
   },
 });
 
