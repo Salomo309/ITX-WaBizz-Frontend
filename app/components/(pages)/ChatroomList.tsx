@@ -12,6 +12,12 @@ import Colors from "./../../constants/colors";
 import Header from "./../Header";
 // import Ionicons from "react-native-vector-icons/Ionicons";
 import ApiUrl from "./../../constants/api";
+import { useNavigation } from '@react-navigation/native';
+import { TouchableHighlight } from 'react-native';
+import {NativeStackNavigationProp } from '@react-navigation/native-stack'
+import { RootStackParamList } from "App";
+
+type ChatroomListNavigationProp = NativeStackNavigationProp<RootStackParamList, 'ChatroomList'>;
 
 interface ChatroomPreviewProps {
   id: number;
@@ -26,6 +32,7 @@ interface ChatroomPreviewProps {
 }
 
 const ChatroomPreview: React.FC<ChatroomPreviewProps> = ({
+  id,
   profilePic,
   name,
   messagePreview,
@@ -36,7 +43,7 @@ const ChatroomPreview: React.FC<ChatroomPreviewProps> = ({
   countUnread,
 }) => {
   return (
-    <View className="w-full h-[50] flex-row align-start justify-center mb-[18]">
+      <View className="w-full h-[50] flex-row align-start justify-center mb-[18]">
       <View className="h-full justify-center">
         {profilePic == "" ? (
           <Image
@@ -58,52 +65,6 @@ const ChatroomPreview: React.FC<ChatroomPreviewProps> = ({
         >
           {name}
         </Text>
-        {/* <View className="flex-1 flex-row items-center">
-          {statusRead == "sent" ? (
-            <Ionicons
-              name="checkmark"
-              size={16}
-              color={Colors.gray}
-              style={{ marginRight: 5 }}
-            />
-          ) : statusRead == "delivered" ? (
-            <Image
-              source={require("../../assets/icons/double-tick-delivered.png")}
-              className="w-[15] h-[15] mr-[5]"
-            />
-          ) : statusRead == "read" ? (
-            <Image
-              source={require("../../assets/icons/double-tick-read.png")}
-              className="w-[15] h-[15] mr-[5]"
-            />
-          ) : (
-            <></>
-          )}
-          {messageType == "photo" ? (
-            <Ionicons
-              name="image-sharp"
-              size={14}
-              color={Colors.gray}
-              style={{ marginRight: 5 }}
-            />
-          ) : messageType == "video" ? (
-            <Ionicons
-              name="videocam-sharp"
-              size={14}
-              color={Colors.gray}
-              style={{ marginRight: 5 }}
-            />
-          ) : (
-            <></>
-          )}
-          <Text
-            className="w-[100%] font-[Roboto] font-medium text-sm text-black"
-            numberOfLines={1}
-            ellipsizeMode="tail"
-          >
-            {messagePreview}
-          </Text>
-        </View> */}
       </View>
       {isRead === "null" || isRead === "1" ? (
         <Text className="font-[Roboto] font-medium text-sm text-black">
@@ -154,12 +115,9 @@ const formatTime = (timestamp: string | number) => {
 };
 
 const ChatroomList = () => {
-  // const { slug } = useLocalSearchParams();
-  // const route = useRouter();
-  // const { slug } = route. || {};
-
+  const navigation = useNavigation<ChatroomListNavigationProp>();
   const [chatrooms, setChatrooms] = useState<ChatroomPreviewProps[]>([]);
-
+  const id = 1;
   useEffect(() => {
     const fetchChatrooms = async () => {
       try {
@@ -203,7 +161,6 @@ const ChatroomList = () => {
 
     fetchChatrooms();
   }, []);
-
   return (
     <SafeAreaView className="flex-1 bg-white">
       <StatusBar backgroundColor={Colors.primary1} />
@@ -211,17 +168,21 @@ const ChatroomList = () => {
       <ScrollView>
         <View className="flex-1 items-start p-[24]">
           {/** dummy data */}
-          <ChatroomPreview
-            id={0}
-            profilePic="https://www.gluwee.com/wp-content/uploads/2021/01/olivia-rodrigo_cover.jpg"
-            name="Arleen Chrysantha Gunardi (Customer)"
-            messagePreview="Terima kasih kak"
-            messageType="text"
-            time="2024-03-11 11:33:12"
-            isRead="null"
-            statusRead="sent"
-            countUnread="25"
-          />
+          <TouchableHighlight
+            onPress={() =>
+            navigation.navigate('Chatroom', {chatId: id})}>
+              <ChatroomPreview
+              id={0}
+              profilePic="https://www.gluwee.com/wp-content/uploads/2021/01/olivia-rodrigo_cover.jpg"
+              name="Arleen Chrysantha Gunardi (Customer)"
+              messagePreview="Terima kasih kak"
+              messageType="text"
+              time="2024-03-11 11:33:12"
+              isRead="null"
+              statusRead="sent"
+              countUnread="25"
+            />
+          </TouchableHighlight>
           <ChatroomPreview
             id={1}
             profilePic="https://0.soompi.io/wp-content/uploads/2019/01/14000832/Soobin1-540x540.jpg"
@@ -236,7 +197,7 @@ const ChatroomList = () => {
 
           {chatrooms &&
             chatrooms.map((chatroom: ChatroomPreviewProps) => (
-              <ChatroomPreview
+                <ChatroomPreview
                 id={chatroom.id}
                 profilePic={chatroom.profilePic}
                 name={chatroom.name}
