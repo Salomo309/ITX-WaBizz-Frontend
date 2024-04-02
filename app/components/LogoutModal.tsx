@@ -1,8 +1,7 @@
 import React from "react";
 import { Text, View, TouchableOpacity } from "react-native";
 import Modal from "react-native-modal";
-import { Link, router } from "expo-router";
-
+import { useAuth } from "./../utils/AuthContext";
 
 type ModalProps = {
   isVisible: boolean;
@@ -10,22 +9,31 @@ type ModalProps = {
 };
 
 const LogoutModal = ({ isVisible, onClose }: ModalProps) => {
-  const logOut = async () => {
-    // console.log("terklik");
-    try {
-      const response = await fetch("https://golden-worthy-basilisk.ngrok-free.app/api/auth/logout", {
-        method: "post",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      console.log("masuk");
-      console.log("YEAY DATA", response);
-      router.replace("/components/Login");
-    } catch (error) {
-      console.log("ADA ERROR", error);
-    }
-  };
+//   const { logOut } = useAuth();
+
+//   const handleLogout = async () => {
+//     try {
+//       const response = await fetch(
+//         "https://golden-worthy-basilisk.ngrok-free.app/api/auth/logout",
+//         {
+//           method: "POST",
+//           headers: {
+//             "Content-Type": "application/json",
+//           },
+//         }
+//       );
+//
+//       if (response.ok) {
+//         logOut();
+//         onClose();
+//       } else {
+//         console.error("Logout failed");
+//       }
+//     } catch (error) {
+//       console.error("Error during logout", error);
+//     }
+//   };
+
   return (
     <View className="flex items-center justify-center">
       <Modal
@@ -50,7 +58,7 @@ const LogoutModal = ({ isVisible, onClose }: ModalProps) => {
             <View className="flex px-2">
               {/* <Link href={"/components/Login"} asChild> */}
               <TouchableOpacity
-                onPress={logOut}
+//                 onPress={logOut}
                 className="bg-[#1663B1] border-[#1663B1] border-2 px-4 py-2 rounded-md"
               >
                 <Text className="text-base text-white">Logout</Text>
