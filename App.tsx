@@ -1,4 +1,3 @@
-import Chatroom from "./app/components/(pages)/Chatroom";
 import React, { useEffect, useState } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -10,7 +9,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 export type RootStackParamList = {
   ChatroomList: undefined;
   Login: undefined;
-  Chatroom: { chatId: number };
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -48,7 +46,11 @@ export default function App() {
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Login">
         {isLoggedIn ? (
-          <Stack.Screen name="ChatroomList" component={ChatroomList} options={{ headerShown: false }} />
+          <Stack.Screen
+            name="ChatroomList"
+            component={ChatroomList}
+            options={{ headerShown: false }}
+          />
         ) : (
           <Stack.Screen
             name="Login"
