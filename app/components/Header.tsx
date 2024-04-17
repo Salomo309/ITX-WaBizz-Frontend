@@ -8,11 +8,14 @@ import {
   Button,
   Modal,
   TextInput,
+  Alert,
 } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import Colors from "../constants/colors";
 import Popover from "react-native-popover-view";
 import LogoutModal from "./LogoutModal";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import auth from "@react-native-firebase/auth";
 
 interface HeaderProps {
   userProfilePic: string;
@@ -38,11 +41,18 @@ const Header: React.FC<HeaderProps> = ({ userProfilePic }) => {
     setModalVisible(true);
   };
 
+  const handleLogout = async () => {
+    try {
+      await AsyncStorage.removeItem("@user_token");
+      auth().signOut();
+    } catch (err) {
+      Alert.alert("Logout Failed", "Unable to logout. Please try again");
+    }
+  };
+
   return (
     <View style={styles.container}>
-      {!searchVisible && (
-        <Text style={styles.title}>ITX WABizz</Text>
-      )}
+      {!searchVisible && <Text style={styles.title}>ITX WABizz</Text>}
       {!searchVisible && (
         <TouchableOpacity onPress={toggleSearch}>
           <Ionicons
@@ -80,23 +90,20 @@ const Header: React.FC<HeaderProps> = ({ userProfilePic }) => {
             style={styles.icon}
           />
         ) : (
-          <Image
-            source={{ uri: userProfilePic }}
-            style={styles.profileImage}
-          />
+          <Image source={{ uri: userProfilePic }} style={styles.profileImage} />
         )}
       </TouchableOpacity>
       <Popover
         popoverStyle={styles.popoverStyle}
         isVisible={popoverVisible}
         onRequestClose={() => setPopoverVisible(false)}
-        from={<View />} // You can replace this with the icon or image component
+        from={<View />}
       >
         <View style={styles.popoverContent}>
           <TouchableOpacity style={styles.popoverItem} onPress={handlePress}>
             <Text style={styles.popoverText}>Manage Users</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.popoverItem} onPress={() => {}}>
+          <TouchableOpacity style={styles.popoverItem} onPress={handleLogout}>
             <Text style={styles.popoverText}>Logout</Text>
           </TouchableOpacity>
         </View>
