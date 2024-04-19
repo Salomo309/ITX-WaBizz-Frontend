@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import Colors from "./../../constants/colors";
 import Header from "./../Header";
-// import Ionicons from "react-native-vector-icons/Ionicons";
+import Ionicons from "react-native-vector-icons/Ionicons";
 import ApiUrl from "./../../constants/api";
 
 interface ChatroomPreviewProps {
@@ -58,7 +58,7 @@ const ChatroomPreview: React.FC<ChatroomPreviewProps> = ({
         >
           {name}
         </Text>
-        {/* <View className="flex-1 flex-row items-center">
+        <View className="flex-1 flex-row items-center">
           {statusRead == "sent" ? (
             <Ionicons
               name="checkmark"
@@ -103,7 +103,7 @@ const ChatroomPreview: React.FC<ChatroomPreviewProps> = ({
           >
             {messagePreview}
           </Text>
-        </View> */}
+        </View>
       </View>
       {isRead === "null" || isRead === "1" ? (
         <Text className="font-[Roboto] font-medium text-sm text-black">
