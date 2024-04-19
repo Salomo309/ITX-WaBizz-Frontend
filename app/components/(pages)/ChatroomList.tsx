@@ -183,21 +183,29 @@ const ChatroomList = () => {
               countUnread="25"
             />
           </TouchableHighlight>
-          <ChatroomPreview
-            id={1}
-            profilePic="https://0.soompi.io/wp-content/uploads/2019/01/14000832/Soobin1-540x540.jpg"
-            name="Go Dillon Audris"
-            messagePreview="Baik kak, akan segera kami proses lebih lanjut ya"
-            messageType="text"
-            time="2024-03-10 13:33:12"
-            isRead="null"
-            statusRead="read"
-            countUnread="25"
-          />
+          <TouchableHighlight
+            onPress={() =>
+            navigation.navigate('Chatroom', {chatId: id})}>
+              <ChatroomPreview
+                id={1}
+                profilePic="https://0.soompi.io/wp-content/uploads/2019/01/14000832/Soobin1-540x540.jpg"
+                name="Go Dillon Audris"
+                messagePreview="Baik kak, akan segera kami proses lebih lanjut ya"
+                messageType="text"
+                time="2024-03-10 13:33:12"
+                isRead="null"
+                statusRead="read"
+                countUnread="25"
+              />
+            </TouchableHighlight>
+          
 
           {chatrooms &&
             chatrooms.map((chatroom: ChatroomPreviewProps) => (
-                <ChatroomPreview
+              <TouchableHighlight
+                onPress={() =>
+                navigation.navigate('Chatroom', {chatId: id})}>
+                  <ChatroomPreview
                 id={chatroom.id}
                 profilePic={chatroom.profilePic}
                 name={chatroom.name}
@@ -208,6 +216,7 @@ const ChatroomList = () => {
                 statusRead={chatroom.statusRead}
                 countUnread={chatroom.countUnread}
               />
+            </TouchableHighlight>
             ))}
         </View>
       </ScrollView>
