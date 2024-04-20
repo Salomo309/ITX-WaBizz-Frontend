@@ -12,6 +12,12 @@ import Colors from "./../../constants/colors";
 import Header from "./../Header";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import ApiUrl from "./../../constants/api";
+import { useNavigation } from '@react-navigation/native';
+import { TouchableHighlight } from 'react-native';
+import {NativeStackNavigationProp } from '@react-navigation/native-stack'
+import { RootStackParamList } from "App";
+
+type ChatroomListNavigationProp = NativeStackNavigationProp<RootStackParamList, 'ChatroomList'>;
 
 interface ChatroomPreviewProps {
   id: number;
@@ -26,6 +32,7 @@ interface ChatroomPreviewProps {
 }
 
 const ChatroomPreview: React.FC<ChatroomPreviewProps> = ({
+  id,
   profilePic,
   name,
   messagePreview,
@@ -36,7 +43,7 @@ const ChatroomPreview: React.FC<ChatroomPreviewProps> = ({
   countUnread,
 }) => {
   return (
-    <View className="w-full h-[50] flex-row align-start justify-center mb-[18]">
+      <View className="w-full h-[50] flex-row align-start justify-center mb-[18]">
       <View className="h-full justify-center">
         {profilePic == "" ? (
           <Image
@@ -154,12 +161,9 @@ const formatTime = (timestamp: string | number) => {
 };
 
 const ChatroomList = () => {
-  // const { slug } = useLocalSearchParams();
-  // const route = useRouter();
-  // const { slug } = route. || {};
-
+  const navigation = useNavigation<ChatroomListNavigationProp>();
   const [chatrooms, setChatrooms] = useState<ChatroomPreviewProps[]>([]);
-
+  const id = 1;
   useEffect(() => {
     const fetchChatrooms = async () => {
       try {
@@ -203,7 +207,6 @@ const ChatroomList = () => {
 
     fetchChatrooms();
   }, []);
-
   return (
     <SafeAreaView className="flex-1 bg-white">
       <StatusBar backgroundColor={Colors.primary1} />
@@ -211,32 +214,44 @@ const ChatroomList = () => {
       <ScrollView>
         <View className="flex-1 items-start p-[24]">
           {/** dummy data */}
-          <ChatroomPreview
-            id={0}
-            profilePic="https://www.gluwee.com/wp-content/uploads/2021/01/olivia-rodrigo_cover.jpg"
-            name="Arleen Chrysantha Gunardi (Customer)"
-            messagePreview="Terima kasih kak"
-            messageType="text"
-            time="2024-03-11 11:33:12"
-            isRead="null"
-            statusRead="sent"
-            countUnread="25"
-          />
-          <ChatroomPreview
-            id={1}
-            profilePic="https://0.soompi.io/wp-content/uploads/2019/01/14000832/Soobin1-540x540.jpg"
-            name="Go Dillon Audris"
-            messagePreview="Baik kak, akan segera kami proses lebih lanjut ya"
-            messageType="text"
-            time="2024-03-10 13:33:12"
-            isRead="null"
-            statusRead="read"
-            countUnread="25"
-          />
+          <TouchableHighlight
+            onPress={() =>
+            navigation.navigate('Chatroom', {chatId: id})}>
+              <ChatroomPreview
+              id={0}
+              profilePic="https://www.gluwee.com/wp-content/uploads/2021/01/olivia-rodrigo_cover.jpg"
+              name="Arleen Chrysantha Gunardi (Customer)"
+              messagePreview="Terima kasih kak"
+              messageType="text"
+              time="2024-03-11 11:33:12"
+              isRead="null"
+              statusRead="sent"
+              countUnread="25"
+            />
+          </TouchableHighlight>
+          <TouchableHighlight
+            onPress={() =>
+            navigation.navigate('Chatroom', {chatId: id})}>
+              <ChatroomPreview
+                id={1}
+                profilePic="https://0.soompi.io/wp-content/uploads/2019/01/14000832/Soobin1-540x540.jpg"
+                name="Go Dillon Audris"
+                messagePreview="Baik kak, akan segera kami proses lebih lanjut ya"
+                messageType="text"
+                time="2024-03-10 13:33:12"
+                isRead="null"
+                statusRead="read"
+                countUnread="25"
+              />
+            </TouchableHighlight>
+          
 
           {chatrooms &&
             chatrooms.map((chatroom: ChatroomPreviewProps) => (
-              <ChatroomPreview
+              <TouchableHighlight
+                onPress={() =>
+                navigation.navigate('Chatroom', {chatId: id})}>
+                  <ChatroomPreview
                 id={chatroom.id}
                 profilePic={chatroom.profilePic}
                 name={chatroom.name}
@@ -247,6 +262,7 @@ const ChatroomList = () => {
                 statusRead={chatroom.statusRead}
                 countUnread={chatroom.countUnread}
               />
+            </TouchableHighlight>
             ))}
         </View>
       </ScrollView>
