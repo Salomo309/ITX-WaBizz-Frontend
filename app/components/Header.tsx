@@ -16,6 +16,7 @@ import Popover from "react-native-popover-view";
 import LogoutModal from "./LogoutModal";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import auth from "@react-native-firebase/auth";
+import ApiUrl from "./../constants/api";
 
 interface HeaderProps {
   userProfilePic: string;
@@ -33,6 +34,7 @@ const Header: React.FC<HeaderProps> = ({ userProfilePic }) => {
 
   const handleBack = () => {
     setSearchVisible(false);
+    setSearchText("");
     // Additional logic can be added here if needed
   };
 
@@ -47,6 +49,37 @@ const Header: React.FC<HeaderProps> = ({ userProfilePic }) => {
       auth().signOut();
     } catch (err) {
       Alert.alert("Logout Failed", "Unable to logout. Please try again");
+    }
+  };
+
+  const handleSearch = async (text: string) => {
+    setSearchText(text);
+    try {
+      const response = await fetch(
+        `${ApiUrl}/chatlist-search-by-contact?query=${text}`
+      );
+      if (!response.ok) {
+        throw new Error(
+          `Network response was not ok: ${response.status} ${response.statusText}`
+        );
+      }
+      const data = await response.json();
+      const filteredChatrooms = data.ChatList.map(
+        (chatroom: any, index: number) => ({
+          id: index + 1,
+          profilePic: "",
+          name: chatroom.customerName,
+          messagePreview: chatroom.content,
+          messageType: chatroom.messageType,
+          time: chatroom.timendate,
+          isRead: chatroom.isRead || false,
+          statusRead: chatroom.statusRead,
+          countUnread: chatroom.countUnread,
+        })
+      );
+      setChatrooms(filteredChatrooms);
+    } catch (error) {
+      console.error("Error searching chatrooms: ", error);
     }
   };
 
@@ -78,7 +111,7 @@ const Header: React.FC<HeaderProps> = ({ userProfilePic }) => {
           style={styles.searchInput}
           placeholder="Search"
           value={searchText}
-          onChangeText={(text) => setSearchText(text)}
+          onChangeText={(text) => handleSearch(text)}
         />
       )}
       <TouchableOpacity onPress={() => setPopoverVisible(true)}>
