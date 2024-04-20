@@ -19,7 +19,7 @@ import { RootStackParamList } from "App";
 
 type ChatroomListNavigationProp = NativeStackNavigationProp<RootStackParamList, 'ChatroomList'>;
 
-interface ChatroomPreviewProps {
+export interface ChatroomPreviewProps {
   id: number;
   profilePic: string;
   name: string;
@@ -210,7 +210,7 @@ const ChatroomList = () => {
   return (
     <SafeAreaView className="flex-1 bg-white">
       <StatusBar backgroundColor={Colors.primary1} />
-      <Header userProfilePic="https://th.bing.com/th/id/OIP.CtpCzACf2_IjRw2YX7n20AHaJ4?rs=1&pid=ImgDetMain" />
+      <Header userProfilePic="https://th.bing.com/th/id/OIP.CtpCzACf2_IjRw2YX7n20AHaJ4?rs=1&pid=ImgDetMain" setChatrooms={setChatrooms}  />
       <ScrollView>
         <View className="flex-1 items-start p-[24]">
           {/** dummy data */}

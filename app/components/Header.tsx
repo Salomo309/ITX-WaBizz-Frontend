@@ -17,12 +17,14 @@ import LogoutModal from "./LogoutModal";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import auth from "@react-native-firebase/auth";
 import ApiUrl from "./../constants/api";
+import { ChatroomPreviewProps } from "./(pages)/ChatroomList";
 
 interface HeaderProps {
   userProfilePic: string;
+  setChatrooms: React.Dispatch<React.SetStateAction<ChatroomPreviewProps[]>>;
 }
 
-const Header: React.FC<HeaderProps> = ({ userProfilePic }) => {
+const Header: React.FC<HeaderProps> = ({ userProfilePic, setChatrooms }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [popoverVisible, setPopoverVisible] = useState(false);
   const [searchVisible, setSearchVisible] = useState(false);
@@ -55,9 +57,7 @@ const Header: React.FC<HeaderProps> = ({ userProfilePic }) => {
   const handleSearch = async (text: string) => {
     setSearchText(text);
     try {
-      const response = await fetch(
-        `${ApiUrl}/chatlist-search-by-contact?query=${text}`
-      );
+      const response = await fetch(`${ApiUrl}/search/contact?keyword=${text}`);
       if (!response.ok) {
         throw new Error(
           `Network response was not ok: ${response.status} ${response.statusText}`
