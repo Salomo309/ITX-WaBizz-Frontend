@@ -172,6 +172,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     paddingHorizontal: 15,
     marginRight: 15,
+    color: "black",
   },
   profileImage: {
     width: 30,
