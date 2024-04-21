@@ -9,6 +9,7 @@ import {
   Modal,
   TextInput,
   Alert,
+  TouchableHighlight,
 } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import Colors from "../constants/colors";
@@ -87,14 +88,14 @@ const Header: React.FC<HeaderProps> = ({ userProfilePic, setChatrooms }) => {
     <View style={styles.container}>
       {!searchVisible && <Text style={styles.title}>ITX WABizz</Text>}
       {!searchVisible && (
-        <TouchableOpacity onPress={toggleSearch}>
+        <TouchableHighlight onPress={toggleSearch}>
           <Ionicons
             name="search-sharp"
             size={24}
             color={Colors.white}
             style={styles.icon}
           />
-        </TouchableOpacity>
+        </TouchableHighlight>
       )}
       {searchVisible && (
         <TouchableOpacity onPress={handleBack}>

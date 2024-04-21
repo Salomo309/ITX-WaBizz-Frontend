@@ -213,39 +213,6 @@ const ChatroomList = () => {
       <Header userProfilePic="https://th.bing.com/th/id/OIP.CtpCzACf2_IjRw2YX7n20AHaJ4?rs=1&pid=ImgDetMain" setChatrooms={setChatrooms}  />
       <ScrollView>
         <View className="flex-1 items-start p-[24]">
-          {/** dummy data */}
-          <TouchableHighlight
-            onPress={() =>
-            navigation.navigate('Chatroom', {chatId: id})}>
-              <ChatroomPreview
-              id={0}
-              profilePic="https://www.gluwee.com/wp-content/uploads/2021/01/olivia-rodrigo_cover.jpg"
-              name="Arleen Chrysantha Gunardi (Customer)"
-              messagePreview="Terima kasih kak"
-              messageType="text"
-              time="2024-03-11 11:33:12"
-              isRead="null"
-              statusRead="sent"
-              countUnread="25"
-            />
-          </TouchableHighlight>
-          <TouchableHighlight
-            onPress={() =>
-            navigation.navigate('Chatroom', {chatId: id})}>
-              <ChatroomPreview
-                id={1}
-                profilePic="https://0.soompi.io/wp-content/uploads/2019/01/14000832/Soobin1-540x540.jpg"
-                name="Go Dillon Audris"
-                messagePreview="Baik kak, akan segera kami proses lebih lanjut ya"
-                messageType="text"
-                time="2024-03-10 13:33:12"
-                isRead="null"
-                statusRead="read"
-                countUnread="25"
-              />
-            </TouchableHighlight>
-          
-
           {chatrooms &&
             chatrooms.map((chatroom: ChatroomPreviewProps) => (
               <TouchableHighlight
