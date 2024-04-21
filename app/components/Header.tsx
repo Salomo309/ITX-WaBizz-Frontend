@@ -58,7 +58,7 @@ const Header: React.FC<HeaderProps> = ({ userProfilePic, setChatrooms }) => {
   const handleSearch = async (text: string) => {
     setSearchText(text);
     try {
-      const response = await fetch(`${ApiUrl}/search/contact?keyword=${text}`);
+      const response = await fetch(`${ApiUrl}/chatlist/search/contact?keyword=${text}`);
       if (!response.ok) {
         throw new Error(
           `Network response was not ok: ${response.status} ${response.statusText}`
