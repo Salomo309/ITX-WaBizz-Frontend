@@ -10,7 +10,6 @@ import {
 } from "react-native";
 import Colors from "./../../constants/colors";
 import Header from "./../Header";
-// import Ionicons from "react-native-vector-icons/Ionicons";
 import ApiUrl from "./../../constants/api";
 import { useNavigation } from '@react-navigation/native';
 import { TouchableHighlight } from 'react-native';
@@ -117,7 +116,6 @@ const formatTime = (timestamp: string | number) => {
 const ChatroomList = () => {
   const navigation = useNavigation<ChatroomListNavigationProp>();
   const [chatrooms, setChatrooms] = useState<ChatroomPreviewProps[]>([]);
-  const id = 1;
   useEffect(() => {
     const fetchChatrooms = async () => {
       try {
@@ -167,53 +165,22 @@ const ChatroomList = () => {
       <Header userProfilePic="https://th.bing.com/th/id/OIP.CtpCzACf2_IjRw2YX7n20AHaJ4?rs=1&pid=ImgDetMain" />
       <ScrollView>
         <View className="flex-1 items-start p-[24]">
-          {/** dummy data */}
-          <TouchableHighlight
-            onPress={() =>
-            navigation.navigate('Chatroom', {chatId: id})}>
-              <ChatroomPreview
-              id={0}
-              profilePic="https://www.gluwee.com/wp-content/uploads/2021/01/olivia-rodrigo_cover.jpg"
-              name="Arleen Chrysantha Gunardi (Customer)"
-              messagePreview="Terima kasih kak"
-              messageType="text"
-              time="2024-03-11 11:33:12"
-              isRead="null"
-              statusRead="sent"
-              countUnread="25"
-            />
-          </TouchableHighlight>
-          <TouchableHighlight
-            onPress={() =>
-            navigation.navigate('Chatroom', {chatId: id})}>
-              <ChatroomPreview
-                id={1}
-                profilePic="https://0.soompi.io/wp-content/uploads/2019/01/14000832/Soobin1-540x540.jpg"
-                name="Go Dillon Audris"
-                messagePreview="Baik kak, akan segera kami proses lebih lanjut ya"
-                messageType="text"
-                time="2024-03-10 13:33:12"
-                isRead="null"
-                statusRead="read"
-                countUnread="25"
-              />
-            </TouchableHighlight>
-          
-
           {chatrooms &&
             chatrooms.map((chatroom: ChatroomPreviewProps) => (
               <TouchableHighlight
+                underlayColor="#DDDDDD"
+                activeOpacity={0.6}
                 onPress={() =>
-                navigation.navigate('Chatroom', {chatId: id})}>
+                navigation.navigate('Chatroom', {chatId: chatroom.id, name: chatroom.name, profilePic: chatroom.profilePic})}>
                   <ChatroomPreview
-                id={chatroom.id}
-                profilePic={chatroom.profilePic}
-                name={chatroom.name}
-                messagePreview={chatroom.messagePreview}
-                messageType={chatroom.messageType}
-                time={chatroom.time}
-                isRead={chatroom.isRead}
-                statusRead={chatroom.statusRead}
+                  id={chatroom.id}
+                  profilePic={chatroom.profilePic}
+                  name={chatroom.name}
+                  messagePreview={chatroom.messagePreview}
+                  messageType={chatroom.messageType}
+                  time={chatroom.time}
+                  isRead={chatroom.isRead}
+                  statusRead={chatroom.statusRead}
                 countUnread={chatroom.countUnread}
               />
             </TouchableHighlight>

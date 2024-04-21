@@ -10,7 +10,7 @@ import Chatroom from "./app/components/(pages)/Chatroom";
 export type RootStackParamList = {
   ChatroomList: undefined;
   Login: undefined;
-  Chatroom: { chatId: number };
+  Chatroom: { chatId: number, name: string, profilePic: string };
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
