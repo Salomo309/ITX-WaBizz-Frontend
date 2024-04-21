@@ -8,6 +8,8 @@ const Colors = {
     gray: '#5F6368',
     white: '#FFFFFF',
     black: '#1F1F1F',
+    backgroundChat: '#EBE6E1',
+    dayModal: '#DBDFEB',
 };
 
 export default Colors;

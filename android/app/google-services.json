@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "224642285117",
+    "project_id": "itx-wabizz",
+    "storage_bucket": "itx-wabizz.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:224642285117:android:8e4eea0b67c830f532b454",
+        "android_client_info": {
+          "package_name": "com.itx_wabizz"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "224642285117-9r44oivtcaggvfte4oroql6l9qo57eo8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.itx_wabizz",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "224642285117-73ks59ifskuckg0qa1hre3s5fo6cisnf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA54UjDH1fMtgljyH5BrAhnY1Ma-B7WKvg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "224642285117-73ks59ifskuckg0qa1hre3s5fo6cisnf.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

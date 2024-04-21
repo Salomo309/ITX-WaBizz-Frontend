@@ -1,10 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { Text, TouchableOpacity, View, Image, StatusBar } from "react-native";
-
-// import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import { RootStackParamList } from "./../../../App";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import auth from "@react-native-firebase/auth";
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+GoogleSignin.configure({
+  webClientId:
+    "224642285117-73ks59ifskuckg0qa1hre3s5fo6cisnf.apps.googleusercontent.com",
+});
 
 type loginScreenProp = NativeStackNavigationProp<RootStackParamList, "Login">;
 
@@ -23,71 +29,38 @@ const LoginPage = () => {
   const [userData, setUserData] = useState<UserData | null>(null);
   const [token, setToken] = useState("");
   const [userInfo, setUserInfo] = useState(null);
-  const navigation = useNavigation();
+  const navigation = useNavigation<loginScreenProp>();
 
-  // const getLocalUser = async () => {
-  //   const data = await AsyncStorage.getItem("@user");
-  //   if (!data) return null;
-  //   return JSON.parse(data);
-  // };
-
-  // const getUserInfo = async (token: string) => {
-  //   if (!token) return;
-  //   try {
-  //     const response = await fetch(
-  //       "https://www.googleapis.com/userinfo/v2/me",
-  //       {
-  //         headers: { Authorization: `Bearer ${token}` },
-  //       }
-  //     );
-
-  //     const user = await response.json();
-  //     await AsyncStorage.setItem("@user", JSON.stringify(user));
-  //     setUserInfo(user);
-  //   } catch (error) {
-  //     // Add your own error handler here
-  //   }
-  // };
-
-  const signIn = async () => {
-    const navigation = useNavigation<loginScreenProp>();
+  async function onGoogleButtonPress() {
     try {
-      const response = await fetch(
-        "https://golden-worthy-basilisk.ngrok-free.app/api/auth/login",
-        {
-          method: "post",
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-          },
-        }
+      await GoogleSignin.hasPlayServices({
+        showPlayServicesUpdateDialog: true,
+      });
+      const { idToken } = await GoogleSignin.signIn();
+      const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+
+      const userCredential = await auth().signInWithCredential(
+        googleCredential
       );
-      console.log(response);
-      if (response.ok) {
-        console.log("HASIL");
-        console.log(response.url);
-        console.log("HASIL TOKEN");
-        console.log(response.url);
-        // let result = await WebBrowser.openAuthSessionAsync(response.url);
-        // console.log(result);
-        // router.replace("/components/ChatroomList");
-        navigation.navigate("ChatroomList");
-        // console.log("RESULT");
-        // console.log(result);
-        // console.log(result);
-      } else {
-        console.log("Gagal mengambil data, status:", response.status);
+      console.log("User sign in successfully");
+
+      if (idToken) {
+        AsyncStorage.setItem("@user_token", idToken);
+        console.log("@user_token:", idToken);
       }
-    } catch (error) {
-      console.log("ADA ERROR", error);
+      AsyncStorage.setItem("@last_login", JSON.stringify(new Date()));
+      console.log("@last_login:", JSON.stringify(new Date()));
+      navigation.navigate("ChatroomList");
+    } catch (err) {
+      console.log(err);
     }
-  };
+  }
 
   return (
     <View className="flex w-full h-full items-center justify-center bg-[#cae4f3] space-y-4">
       <Image source={require("../../assets/images/logo.png")} />
       <TouchableOpacity
-        onPress={signIn}
+        onPress={onGoogleButtonPress}
         className="flex flex-row justify-center items-center space-x-4 bg-[#005DB4] rounded-lg px-16 py-4"
       >
         <Image source={require("../../assets/icons/google.png")} />
