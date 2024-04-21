@@ -34,7 +34,6 @@ const Header: React.FC<HeaderProps> = ({ userProfilePic, setChatrooms }) => {
 
   const toggleSearch = () => {
     setSearchVisible(!searchVisible);
-    handleLogout();
   };
 
   const handleBack = () => {
@@ -89,17 +88,16 @@ const Header: React.FC<HeaderProps> = ({ userProfilePic, setChatrooms }) => {
     <View style={styles.container}>
       {!searchVisible && <Text style={styles.title}>ITX WABizz</Text>}
       {!searchVisible && (
-        <TouchableHighlight onPress={toggleSearch}>
+        <TouchableOpacity onPress={toggleSearch} style={styles.icon}>
           <Ionicons
             name="search-sharp"
             size={24}
             color={Colors.white}
-            style={styles.icon}
           />
-        </TouchableHighlight>
+        </TouchableOpacity>
       )}
       {searchVisible && (
-        <TouchableOpacity onPress={handleBack}>
+        <TouchableOpacity onPress={handleBack} style={styles.icon}>
           <Ionicons
             name="arrow-back"
             size={24}
@@ -121,10 +119,9 @@ const Header: React.FC<HeaderProps> = ({ userProfilePic, setChatrooms }) => {
         ref={ellipsisRef}
       >
         <Ionicons
-          name="ellipsis-horizontal"
-          size={30}
+          name="ellipsis-vertical"
+          size={24}
           color={Colors.white}
-          style={styles.icon}
         />
       </TouchableOpacity>
       <Popover
@@ -162,13 +159,14 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: Colors.white,
     fontWeight: "bold",
-    marginRight: "auto",
+    flexGrow: 100,
   },
   icon: {
+    flex: 0,
     marginRight: 15,
   },
   searchInput: {
-    flex: 1,
+    flex: 100,
     height: 40,
     backgroundColor: Colors.white,
     borderRadius: 20,
