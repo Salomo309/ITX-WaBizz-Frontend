@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import {
   View,
   StyleSheet,
@@ -30,15 +30,16 @@ const Header: React.FC<HeaderProps> = ({ userProfilePic, setChatrooms }) => {
   const [popoverVisible, setPopoverVisible] = useState(false);
   const [searchVisible, setSearchVisible] = useState(false);
   const [searchText, setSearchText] = useState("");
+  const ellipsisRef = useRef(null);
 
   const toggleSearch = () => {
     setSearchVisible(!searchVisible);
+    handleLogout();
   };
 
   const handleBack = () => {
     setSearchVisible(false);
     setSearchText("");
-    // Additional logic can be added here if needed
   };
 
   const handlePress = () => {
@@ -115,29 +116,28 @@ const Header: React.FC<HeaderProps> = ({ userProfilePic, setChatrooms }) => {
           onChangeText={(text) => handleSearch(text)}
         />
       )}
-      <TouchableOpacity onPress={() => setPopoverVisible(true)}>
-        {userProfilePic == "" ? (
-          <Ionicons
-            name="person-circle-sharp"
-            size={30}
-            color={Colors.white}
-            style={styles.icon}
-          />
-        ) : (
-          <Image source={{ uri: userProfilePic }} style={styles.profileImage} />
-        )}
+      <TouchableOpacity
+        onPress={() => setPopoverVisible(true)}
+        ref={ellipsisRef}
+      >
+        <Ionicons
+          name="ellipsis-horizontal"
+          size={30}
+          color={Colors.white}
+          style={styles.icon}
+        />
       </TouchableOpacity>
       <Popover
         popoverStyle={styles.popoverStyle}
         isVisible={popoverVisible}
         onRequestClose={() => setPopoverVisible(false)}
-        from={<View />}
+        from={ellipsisRef.current}
       >
         <View style={styles.popoverContent}>
-          <TouchableOpacity style={styles.popoverItem} onPress={handlePress}>
+          <TouchableOpacity style={styles.popoverItem}>
             <Text style={styles.popoverText}>Manage Users</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.popoverItem} onPress={handleLogout}>
+          <TouchableOpacity style={styles.popoverItem} onPress={handlePress}>
             <Text style={styles.popoverText}>Logout</Text>
           </TouchableOpacity>
         </View>
@@ -199,6 +199,7 @@ const styles = StyleSheet.create({
   },
   popoverText: {
     fontSize: 16,
+    color: "black",
   },
 });
 
