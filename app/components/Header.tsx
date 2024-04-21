@@ -9,6 +9,7 @@ import {
   Modal,
   TextInput,
   Alert,
+  TouchableHighlight,
 } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import Colors from "../constants/colors";
@@ -16,12 +17,15 @@ import Popover from "react-native-popover-view";
 import LogoutModal from "./LogoutModal";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import auth from "@react-native-firebase/auth";
+import ApiUrl from "./../constants/api";
+import { ChatroomPreviewProps } from "./(pages)/ChatroomList";
 
 interface HeaderProps {
   userProfilePic: string;
+  setChatrooms: React.Dispatch<React.SetStateAction<ChatroomPreviewProps[]>>;
 }
 
-const Header: React.FC<HeaderProps> = ({ userProfilePic }) => {
+const Header: React.FC<HeaderProps> = ({ userProfilePic, setChatrooms }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [popoverVisible, setPopoverVisible] = useState(false);
   const [searchVisible, setSearchVisible] = useState(false);
@@ -33,6 +37,7 @@ const Header: React.FC<HeaderProps> = ({ userProfilePic }) => {
 
   const handleBack = () => {
     setSearchVisible(false);
+    setSearchText("");
     // Additional logic can be added here if needed
   };
 
@@ -50,18 +55,47 @@ const Header: React.FC<HeaderProps> = ({ userProfilePic }) => {
     }
   };
 
+  const handleSearch = async (text: string) => {
+    setSearchText(text);
+    try {
+      const response = await fetch(`${ApiUrl}/search/contact?keyword=${text}`);
+      if (!response.ok) {
+        throw new Error(
+          `Network response was not ok: ${response.status} ${response.statusText}`
+        );
+      }
+      const data = await response.json();
+      const filteredChatrooms = data.ChatList.map(
+        (chatroom: any, index: number) => ({
+          id: index + 1,
+          profilePic: "",
+          name: chatroom.customerName,
+          messagePreview: chatroom.content,
+          messageType: chatroom.messageType,
+          time: chatroom.timendate,
+          isRead: chatroom.isRead || false,
+          statusRead: chatroom.statusRead,
+          countUnread: chatroom.countUnread,
+        })
+      );
+      setChatrooms(filteredChatrooms);
+    } catch (error) {
+      console.error("Error searching chatrooms: ", error);
+    }
+  };
+
   return (
     <View style={styles.container}>
       {!searchVisible && <Text style={styles.title}>ITX WABizz</Text>}
       {!searchVisible && (
-        <TouchableOpacity onPress={toggleSearch}>
+        <TouchableHighlight onPress={toggleSearch}>
           <Ionicons
             name="search-sharp"
             size={24}
             color={Colors.white}
             style={styles.icon}
           />
-        </TouchableOpacity>
+        </TouchableHighlight>
       )}
       {searchVisible && (
         <TouchableOpacity onPress={handleBack}>
@@ -78,7 +112,7 @@ const Header: React.FC<HeaderProps> = ({ userProfilePic }) => {
           style={styles.searchInput}
           placeholder="Search"
           value={searchText}
-          onChangeText={(text) => setSearchText(text)}
+          onChangeText={(text) => handleSearch(text)}
         />
       )}
       <TouchableOpacity onPress={() => setPopoverVisible(true)}>

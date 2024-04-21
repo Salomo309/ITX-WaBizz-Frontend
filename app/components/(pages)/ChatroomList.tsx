@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import Colors from "./../../constants/colors";
 import Header from "./../Header";
+import Ionicons from "react-native-vector-icons/Ionicons";
 import ApiUrl from "./../../constants/api";
 import { useNavigation } from '@react-navigation/native';
 import { TouchableHighlight } from 'react-native';
@@ -18,7 +19,7 @@ import { RootStackParamList } from "App";
 
 type ChatroomListNavigationProp = NativeStackNavigationProp<RootStackParamList, 'ChatroomList'>;
 
-interface ChatroomPreviewProps {
+export interface ChatroomPreviewProps {
   id: number;
   profilePic: string;
   name: string;
@@ -64,6 +65,52 @@ const ChatroomPreview: React.FC<ChatroomPreviewProps> = ({
         >
           {name}
         </Text>
+        <View className="flex-1 flex-row items-center">
+          {statusRead == "sent" ? (
+            <Ionicons
+              name="checkmark"
+              size={16}
+              color={Colors.gray}
+              style={{ marginRight: 5 }}
+            />
+          ) : statusRead == "delivered" ? (
+            <Image
+              source={require("../../assets/icons/double-tick-delivered.png")}
+              className="w-[15] h-[15] mr-[5]"
+            />
+          ) : statusRead == "read" ? (
+            <Image
+              source={require("../../assets/icons/double-tick-read.png")}
+              className="w-[15] h-[15] mr-[5]"
+            />
+          ) : (
+            <></>
+          )}
+          {messageType == "photo" ? (
+            <Ionicons
+              name="image-sharp"
+              size={14}
+              color={Colors.gray}
+              style={{ marginRight: 5 }}
+            />
+          ) : messageType == "video" ? (
+            <Ionicons
+              name="videocam-sharp"
+              size={14}
+              color={Colors.gray}
+              style={{ marginRight: 5 }}
+            />
+          ) : (
+            <></>
+          )}
+          <Text
+            className="w-[100%] font-[Roboto] font-medium text-sm text-black"
+            numberOfLines={1}
+            ellipsizeMode="tail"
+          >
+            {messagePreview}
+          </Text>
+        </View>
       </View>
       {isRead === "null" || isRead === "1" ? (
         <Text className="font-[Roboto] font-medium text-sm text-black">
@@ -162,7 +209,7 @@ const ChatroomList = () => {
   return (
     <SafeAreaView className="flex-1 bg-white">
       <StatusBar backgroundColor={Colors.primary1} />
-      <Header userProfilePic="https://th.bing.com/th/id/OIP.CtpCzACf2_IjRw2YX7n20AHaJ4?rs=1&pid=ImgDetMain" />
+      <Header userProfilePic="https://th.bing.com/th/id/OIP.CtpCzACf2_IjRw2YX7n20AHaJ4?rs=1&pid=ImgDetMain" setChatrooms={setChatrooms}  />
       <ScrollView>
         <View className="flex-1 items-start p-[24]">
           {chatrooms &&
