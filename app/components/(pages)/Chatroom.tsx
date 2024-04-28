@@ -49,6 +49,33 @@ interface ChatPreviewProps{
   messageType: string;
 }
 
+const formatTimendate = (timestamp: string | number) => {
+  const date = new Date(timestamp);
+  const now = new Date();
+
+  const isYesterday = (date: Date) => {
+    const yesterday = new Date(now);
+    yesterday.setDate(now.getDate() - 1);
+    return date.toDateString() === yesterday.toDateString();
+  };
+
+  const isToday = (date: Date) => {
+    return date.toDateString() === now.toDateString();
+  };
+
+  if (isToday(date)) {
+    return "Today";
+  } else if (isYesterday(date)) {
+    return "Yesterday";
+  } else {
+    return date.toLocaleDateString([], {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    });
+  }
+};
+
 const Chatroom = () =>{
   const route = useRoute<ChatroomScreenRouteProp>();
   const {chatId, name, profilePic} = route.params;
@@ -84,6 +111,8 @@ const Chatroom = () =>{
             messageType: chat.MessageType,
           })
         );
+        chats.sort((a, b) => new Date(a.timendate).getTime() - new Date(b.timendate).getTime());
+
         setChats(chats);
       } catch(error){
         console.error("Error fetching chats: ", error);
@@ -102,8 +131,29 @@ const Chatroom = () =>{
         <StatusBar backgroundColor={Colors.primary1} />
         <HeaderChat profilePic={profilePic} userName={name} />
         <ScrollView backgroundColor={Colors.backgroundChat}>
+          {/* showDayHolderModal("2024-04-28 12:14:12") */}
+          <DayHolder day={formatTimendate("2024-04-28")}></DayHolder>
+          <CustomerChat
+            key={"1"}
+            content={"Halo boleh nanya tentang IT consulting?"}
+            time={"2024-04-28 12:14:12"}>
+          </CustomerChat>
+          <AdminChat
+            key={"1"}
+            content={"Boleh, Kak"}
+            time={"2024-04-28 12:15:29"}
+            statusRead={"delivered"}>
+          </AdminChat>
+
           {chats && 
             chats.map((chat: ChatPreviewProps) => (
+              // (index == 0 || chat.timendate.split(" ")[0] !== chats[index - 1].timendate.split(" ")[0]) ? showDayHolderModal(chat.timendate.split(" ")[0]) : <></>;
+              // (index === 0) ? (
+              //   <DayHolder day={formatTimendate("2024-04-28")}></DayHolder>
+              // ) : (
+              //   <></>
+              // )
+
               chat.timendate.split(" ")[0] !== lastDayHolderDate && showDayHolderModal(chat.timendate.split(" ")[0]),
               chat.isRead == null ? (
                 <AdminChat
