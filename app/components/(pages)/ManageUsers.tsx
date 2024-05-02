@@ -37,8 +37,8 @@ const User : React.FC<Users> = ({
     };
 
     return (
-        <View className="w-full h-[50] flex-row align-start justify-center mb-[18]">
-            <View className="w-full h-[50] flex-column align-start justify-center">
+        <View className="w-[100%] h-[50] flex-row align-center justify-center mb-[18] pl-10 pr-10">
+            <View className="w-[85%] h-[50] flex-column align-start justify-center">
                 <Text
                     className="w-[85%] font-[Roboto] font-bold text-base text-black mb-[2]"
                     numberOfLines={1}
@@ -47,14 +47,14 @@ const User : React.FC<Users> = ({
                     {name}
                 </Text>
                 <Text
-                    className="w-[85%] font-[Roboto] font-regular text-base text-black mb-[2]"
+                    className="w-[85%] font-[Roboto] font-regular text-sm text-black"
                     numberOfLines={1}
                     ellipsizeMode="tail"
                 >
                     {email}
                 </Text>
             </View>
-            <Switch value={isActiveToggle} onValueChange={toggleIsActive} />
+            <Switch className="transform scale-110" value={isActiveToggle} onValueChange={toggleIsActive} />
         </View>
     )
 }
@@ -73,11 +73,8 @@ const ManageUsers = () => {
         <SafeAreaView className="flex-1 bg-white">
             <StatusBar backgroundColor={Colors.primary1} />
             <HeaderManageUsers/>
-            <Text>List Users</Text>
-            <User id={0} name={"name"} email={"13521059@std.stei.itb.ac.id"} isActive={true} />
+            <Text style={styles.titleText}>List Users</Text>
             <ScrollView>
-                <Text>List Users</Text>
-
                 {/* Dummy data  */}
                 {users.map((user) => (
                     <User key={user.id} {...user} />
@@ -86,5 +83,19 @@ const ManageUsers = () => {
         </SafeAreaView>
     )
 }
+
+const styles = {
+    titleText: {
+      fontFamily: 'Roboto',
+      fontWeight: 'bold',
+      color: '#5F6368', // Custom gray color
+      fontSize: 14, // Base font size
+      textAlign: 'left',
+      paddingLeft: 40,
+      paddingRight: 40,
+      paddingTop: 25,
+      paddingBottom: 20,
+    },
+  };
 
 export default ManageUsers;
