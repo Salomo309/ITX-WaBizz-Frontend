@@ -76,6 +76,42 @@ const formatTimendate = (timestamp: string | number) => {
   }
 };
 
+// dummy data
+const dummyChats: ChatPreviewProps[] = [
+  {
+    id: 1,
+    timendate: "2024-04-28 12:14:12",
+    content: "Halo?",
+    statusRead: "",
+    isRead: "",
+    messageType: "",
+  },
+  {
+    id: 2,
+    timendate: "2024-04-28 12:14:12",
+    content: "Selamat siang, Kakak... Ada yang bisa dibanting?",
+    statusRead: "",
+    isRead: null,
+    messageType: "",
+  },
+  {
+    id: 3,
+    timendate: "2024-05-03 12:15:29",
+    content: "Permisi admin mw nanya",
+    statusRead: "delivered",
+    isRead: "",
+    messageType: "",
+  },
+  {
+    id: 4,
+    timendate: "2024-05-03 12:15:29",
+    content: "Boleh, Kak",
+    statusRead: "delivered",
+    isRead: null,
+    messageType: "",
+  },
+];
+
 const Chatroom = () =>{
   const route = useRoute<ChatroomScreenRouteProp>();
   const {chatId, name, profilePic} = route.params;
@@ -122,55 +158,55 @@ const Chatroom = () =>{
     fetchChats();
   }, []);
 
-    const showDayHolderModal = (date: string) => {
-      setLastDayHolderDate(date);
-      return <DayHolder day={date}></DayHolder>;
+    const renderChatMessagesByDay = (chatData: ChatPreviewProps[]) => {
+      let renderedComponents: JSX.Element[] = [];
+      let currentDate = "";
+  
+      chatData.forEach((chat: ChatPreviewProps) => {
+        const chatDate = chat.timendate.split(" ")[0];
+        if (chatDate !== currentDate) {
+          renderedComponents.push(
+            <DayHolder day={formatTimendate(chatDate)}></DayHolder>
+          );
+          currentDate = chatDate;
+        }
+  
+        if (chat.isRead == null) {
+          renderedComponents.push(
+            <AdminChat
+              key={chat.id}
+              content={chat.content}
+              time={chat.timendate}
+              statusRead={chat.statusRead}
+            />
+          );
+        } else {
+          renderedComponents.push(
+            <CustomerChat
+              key={chat.id}
+              content={chat.content}
+              time={chat.timendate}
+            />
+          );
+        }
+      });
+  
+      return renderedComponents;
     };
+
     return(
       <SafeAreaView className="flex-1 bg-white">
         <StatusBar backgroundColor={Colors.primary1} />
         <HeaderChat profilePic={profilePic} userName={name} />
         <ScrollView backgroundColor={Colors.backgroundChat}>
-          {/* showDayHolderModal("2024-04-28 12:14:12") */}
-          <DayHolder day={formatTimendate("2024-04-28")}></DayHolder>
-          <CustomerChat
-            key={"1"}
-            content={"Halo boleh nanya tentang IT consulting?"}
-            time={"2024-04-28 12:14:12"}>
-          </CustomerChat>
-          <AdminChat
-            key={"1"}
-            content={"Boleh, Kak"}
-            time={"2024-04-28 12:15:29"}
-            statusRead={"delivered"}>
-          </AdminChat>
-
-          {chats && 
-            chats.map((chat: ChatPreviewProps) => (
-              // (index == 0 || chat.timendate.split(" ")[0] !== chats[index - 1].timendate.split(" ")[0]) ? showDayHolderModal(chat.timendate.split(" ")[0]) : <></>;
-              // (index === 0) ? (
-              //   <DayHolder day={formatTimendate("2024-04-28")}></DayHolder>
-              // ) : (
-              //   <></>
-              // )
-
-              chat.timendate.split(" ")[0] !== lastDayHolderDate && showDayHolderModal(chat.timendate.split(" ")[0]),
-              chat.isRead == null ? (
-                <AdminChat
-                  key={chat.id}
-                  content={chat.content}
-                  time={chat.timendate}
-                  statusRead={chat.statusRead}>
-                </AdminChat>
-              ) : (
-                <CustomerChat
-                  key={chat.id}
-                  content={chat.content}
-                  time={chat.timendate}>
-                </CustomerChat>
-              )))}
+          {/**dummy data */}
+          {/* {renderChatMessagesByDay(dummyChats)} */}
+          {dummyChats.length > 0 && renderChatMessagesByDay(dummyChats)}
+          {dummyChats.length > 0 && renderChatMessagesByDay(chats)}
         </ScrollView>
-      <TypeBar></TypeBar>
+        <View className="p-[20]" backgroundColor={Colors.backgroundChat}>
+          <TypeBar></TypeBar>
+        </View>
     </SafeAreaView>
     )
 }
