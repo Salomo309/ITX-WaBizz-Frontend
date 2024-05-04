@@ -8,6 +8,11 @@ interface AdminChatProps{
     statusRead: string;
 }
 
+const formatTimeBubbleChat = (timestamp: string | number) => {
+    const date = new Date(timestamp);
+    return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit"});
+};
+
 const AdminChat: React.FC<AdminChatProps> = ({time, content, statusRead}) => {
     return (
         <View className="mt-[20] ml-[60] mr-[20] p-[10] rounded-lg"
@@ -17,7 +22,7 @@ const AdminChat: React.FC<AdminChatProps> = ({time, content, statusRead}) => {
             </Text>
             <View className="flex-row justify-end items-left">
                 <Text className="text-s font-[Roboto] text-gray text-right mr-2">
-                    {time}
+                    {formatTimeBubbleChat(time)}
                 </Text>
                 {statusRead === "sent" ? (
                     <Image className="w-5 h-5"
