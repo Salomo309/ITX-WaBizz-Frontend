@@ -1,11 +1,5 @@
 import React, { useState } from "react";
-import {
-  View,
-  TextInput,
-  TouchableOpacity,
-  Alert,
-  PermissionsAndroid,
-} from "react-native";
+import { View, TextInput, TouchableOpacity, Alert } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import DocumentPicker, {
   DocumentPickerResponse,
@@ -61,37 +55,25 @@ const TypeBar = () => {
   };
 
   const handleCamera = async () => {
-    try {
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.CAMERA
-      );
-      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        // Proceed with camera launch as before
-        const options: ImagePicker.CameraOptions = {
-          mediaType: "photo",
-          saveToPhotos: true,
-          quality: 0.8,
-        };
-        ImagePicker.launchCamera(options, (response) => {
-          if (response.didCancel) {
-            console.log("User cancelled image picker");
-          } else if (response.errorMessage) {
-            console.log("ImagePicker Error: ", response.errorMessage);
-          } else if (
-            response.assets &&
-            response.assets.length > 0 &&
-            response.assets[0].uri
-          ) {
-            const { uri } = response.assets[0];
-            onSendMessage(uri, "image");
-          }
-        });
-      } else {
-        console.log("Camera permission denied");
+    const options: ImagePicker.CameraOptions = {
+      mediaType: "photo",
+      saveToPhotos: true,
+      quality: 0.8,
+    };
+    ImagePicker.launchCamera(options, (response) => {
+      if (response.didCancel) {
+        console.log("User cancelled image picker");
+      } else if (response.errorMessage) {
+        console.log("ImagePicker Error: ", response.errorMessage);
+      } else if (
+        response.assets &&
+        response.assets.length > 0 &&
+        response.assets[0].uri
+      ) {
+        const { uri } = response.assets[0];
+        onSendMessage(uri, "image");
       }
-    } catch (error) {
-      console.error("Error requesting camera permission:", error);
-    }
+    });
   };
 
   const handleAttachment = async () => {
