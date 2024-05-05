@@ -212,6 +212,24 @@ const ChatroomList = () => {
       <Header userProfilePic="https://th.bing.com/th/id/OIP.CtpCzACf2_IjRw2YX7n20AHaJ4?rs=1&pid=ImgDetMain" setChatrooms={setChatrooms}  />
       <ScrollView>
         <View className="flex-1 items-start p-[24]">
+        <TouchableHighlight
+            underlayColor="#DDDDDD"
+            activeOpacity={0.6}
+            onPress={() =>
+            navigation.navigate('Chatroom', {chatId: 0, name: "+62 80000000000", profilePic: ""})}>
+            <ChatroomPreview
+              id={0}
+              profilePic={""}
+              name={"+62 80000000000"}
+              messagePreview={"oke kak"}
+              messageType={"text"}
+              time={"2024-04-02 03:14"}
+              isRead={"True"}
+              statusRead={"read"}
+              countUnread={"0"}
+            />
+        </TouchableHighlight>
+
           {chatrooms &&
             chatrooms.map((chatroom: ChatroomPreviewProps) => (
               <TouchableHighlight

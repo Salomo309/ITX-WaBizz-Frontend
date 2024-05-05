@@ -11,6 +11,7 @@ import {
   Alert,
   TouchableHighlight,
 } from "react-native";
+import { RouteProp, useNavigation } from '@react-navigation/native';
 import Ionicons from "react-native-vector-icons/Ionicons";
 import Colors from "../constants/colors";
 import Popover from "react-native-popover-view";
@@ -19,11 +20,15 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import auth from "@react-native-firebase/auth";
 import ApiUrl from "./../constants/api";
 import { ChatroomPreviewProps } from "./(pages)/ChatroomList";
+import { RootStackParamList } from "App";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 interface HeaderProps {
   userProfilePic: string;
   setChatrooms: React.Dispatch<React.SetStateAction<ChatroomPreviewProps[]>>;
 }
+
+type ManageUsersScreenRouteProp = NativeStackNavigationProp<RootStackParamList, 'ManageUsers'>;
 
 const Header: React.FC<HeaderProps> = ({ userProfilePic, setChatrooms }) => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -84,6 +89,8 @@ const Header: React.FC<HeaderProps> = ({ userProfilePic, setChatrooms }) => {
     }
   };
 
+  const navigation = useNavigation<ManageUsersScreenRouteProp>();
+
   return (
     <View style={styles.container}>
       {!searchVisible && <Text style={styles.title}>ITX WABizz</Text>}
@@ -131,7 +138,8 @@ const Header: React.FC<HeaderProps> = ({ userProfilePic, setChatrooms }) => {
         from={ellipsisRef.current}
       >
         <View style={styles.popoverContent}>
-          <TouchableOpacity style={styles.popoverItem}>
+          <TouchableOpacity style={styles.popoverItem} onPress={() =>
+                navigation.navigate('ManageUsers')}>
             <Text style={styles.popoverText}>Manage Users</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.popoverItem} onPress={handlePress}>

@@ -6,11 +6,13 @@ import LoginPage from "./app/components/(pages)/Login";
 import auth from "@react-native-firebase/auth";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Chatroom from "./app/components/(pages)/Chatroom";
+import ManageUsers from "./app/components/(pages)/ManageUsers";
 
 export type RootStackParamList = {
   ChatroomList: undefined;
   Login: undefined;
   Chatroom: { chatId: number, name: string, profilePic: string };
+  ManageUsers: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -57,6 +59,10 @@ export default function App() {
           <Stack.Screen
             name="Chatroom"
             component={Chatroom}
+            options={{ headerShown: false }} />
+          <Stack.Screen
+            name="ManageUsers"
+            component={ManageUsers}
             options={{ headerShown: false }} />
           </>
         ) : (

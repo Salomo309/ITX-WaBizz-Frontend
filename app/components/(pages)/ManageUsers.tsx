@@ -1,0 +1,273 @@
+import {
+  Text,
+  TextInput,
+  Button,
+  View,
+  StyleSheet,
+  ScrollView,
+  SafeAreaView,
+  StatusBar,
+  Image,
+  Switch,
+  TouchableOpacity,
+} from "react-native";
+import HeaderManageUsers from "../HeaderManageUsers";
+import Colors from "./../../constants/colors";
+import ApiUrl from "./../../constants/api";
+import { RouteProp, useRoute } from "@react-navigation/native";
+import { RootStackParamList } from "App";
+import { useState, useEffect } from "react";
+
+type ManageUsersScreenRouteProp = RouteProp<RootStackParamList, 'ManageUsers'>;
+
+export interface Users {
+  name: string;
+  email: string;
+  isActive: boolean;
+}
+
+const User: React.FC<Users> = ({ name, email, isActive }) => {
+    const [isActiveToggle, setIsActiveToggle] = useState<boolean>(isActive);
+
+    useEffect(() => {
+        const fetchActivation = async () => {
+            try {
+                const apiUrl = isActiveToggle ? '/user/active' : '/user/inactive';
+                const response = await fetch(ApiUrl.concat(apiUrl + "?email=" + email), {
+                    method: "get",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                });
+
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                }
+
+                const data = await response.json();
+                console.log("User: ", data);
+
+            } catch (error) {
+                console.error("Error fetching user: ", error);
+            }
+        };
+
+        fetchActivation();
+    }, [isActiveToggle]);
+
+    const toggleIsActive = () => {
+        setIsActiveToggle(!isActiveToggle);
+    };
+
+    return (
+        <View className="w-[100%] h-[50] flex-row align-center justify-center mb-[18] pl-10 pr-10">
+            <View className="w-[85%] h-[50] flex-column align-start justify-center">
+                <Text
+                    className="w-[85%] font-[Roboto] font-bold text-base text-black mb-[2]"
+                    numberOfLines={1}
+                    ellipsizeMode="tail"
+                >
+                    {name}
+                </Text>
+                <Text
+                    className="w-[85%] font-[Roboto] font-regular text-sm text-black"
+                    numberOfLines={1}
+                    ellipsizeMode="tail"
+                >
+                    {email}
+                </Text>
+            </View>
+            <Switch className="transform scale-110" value={isActiveToggle} onValueChange={toggleIsActive} />
+        </View>
+    )
+}
+
+
+const ManageUsers = () => {
+    const route = useRoute<ManageUsersScreenRouteProp>();
+    const [users, setUsers] = useState([
+        // { name: 'Dillon Audris', email: 'godillon@example.com', isActive: true },
+        // { name: 'Austin Pardosi', email: 'austinpardosi@example.com', isActive: false },
+        // { name: 'Manuella Sianipar', email: 'manuella@example.com', isActive: true },
+        // { name: 'Salomo Manalu', email: 'salmanalu@example.com', isActive: false },
+    ]);
+
+    useEffect(() => {
+        const fecthUsers = async () => {
+            try{
+                const response = await fetch(ApiUrl.concat("/user/all"), {
+                    method: "get",
+                    headers: {
+                      "Content-Type": "application/json",
+                    },
+                  });
+
+                  if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                  }
+
+                  const data = await response.json();
+                  console.log("Users: ", data);
+
+                  const usersData = data.Users;
+
+                  const users = usersData.map((user: any) => (
+                    {
+                        name: user.Email,
+                        email: user.Email,
+                        isActive: user.IsActive,
+                    }
+                  ));
+
+                  setUsers(users);
+            } catch (error) {
+                console.error("Error fetching users: ", error);
+              }
+        };
+
+        fecthUsers();
+    }, []);
+
+    const [newUserEmail, setNewUserEmail] = useState('');
+    const [showTextInput, setShowTextInput] = useState(false);
+
+    const handleAddUser = () => {
+        if (newUserEmail.trim() === '') {
+            return;
+        }
+        const fetchAdd = async () => {
+            try {
+                const response = await fetch(ApiUrl.concat('/user/insert'), {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        email: newUserEmail,
+                        is_active: true,
+                    }),
+                });
+        
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+        
+                const data = await response.json();
+                console.log('User:', data);
+            } catch (error) {
+                console.error('Error adding user:', error);
+            }
+        };
+
+        fetchAdd();
+        setUsers([...users, { name: newUserEmail, email: newUserEmail, isActive: true }]);
+        setNewUserEmail('');
+        setShowTextInput(false);
+    };
+
+    const handleShowTextInput = () => {
+        setShowTextInput(true);
+    };
+
+    return (
+        <SafeAreaView className="flex-1 bg-white">
+            <StatusBar backgroundColor={Colors.primary1} />
+            <HeaderManageUsers/>
+            <Text style={styles.titleText}>List Users</Text>
+            <ScrollView>
+                {/* Dummy data  */}
+                {users.map((user) => (
+                    <User key={user.email} {...user} />
+                ))}
+            {!showTextInput && (
+                <View style={styles.addButtonContainer}>
+                    <TouchableOpacity
+                        style={styles.addButton}
+                        onPress={handleShowTextInput}
+                    >
+                        <Text style={styles.buttonText}>+</Text>
+                    </TouchableOpacity>
+                </View>
+            )}
+            {/* Input field for new user */}
+            {showTextInput && (
+                <View style={styles.inputContainer}>
+                    <TextInput
+                        style={styles.input}
+                        value={newUserEmail}
+                        onChangeText={setNewUserEmail}
+                        placeholder="Enter email"
+                    />
+                    <TouchableOpacity
+                        style={styles.addUserButton}
+                        onPress={handleAddUser}
+                    >
+                        <Text style={styles.buttonText}>Add User</Text>
+                    </TouchableOpacity>
+                </View>
+            )}
+            </ScrollView>
+        </SafeAreaView>
+    )
+}
+
+const styles = {
+    titleText: {
+      fontFamily: 'Roboto',
+      fontWeight: 'bold',
+      color: '#5F6368', // Custom gray color
+      fontSize: 14, // Base font size
+      textAlign: 'left',
+      paddingLeft: 40,
+      paddingRight: 40,
+      paddingTop: 25,
+      paddingBottom: 20,
+    },
+    addButtonContainer: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 20,
+    },
+    inputContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingLeft: 40,
+        paddingRight: 40,
+        paddingTop: 25,
+        paddingBottom: 20,
+    },
+    input: {
+        flex: 1,
+        borderColor: 'gray',
+        borderWidth: 1,
+        borderRadius: 10,
+        padding: 10,
+        marginBottom: 10,
+    },
+    addButton: {
+        backgroundColor: Colors.primary2,
+        width: 50,
+        height: 50,
+        borderRadius: 25,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginBottom: 10,
+        marginLeft: 10,
+    },
+    addUserButton: {
+        backgroundColor: Colors.primary2,
+        padding: 10,
+        borderRadius: 20,
+        alignItems: 'center',
+        marginBottom: 10,
+        marginLeft: 10,
+        minWidth: 100,
+    },
+    buttonText: {
+        color: 'white',
+        fontSize: 16,
+        fontWeight: 'bold',
+    },
+  };
+
+export default ManageUsers;
