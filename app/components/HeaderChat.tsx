@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -14,11 +14,17 @@ import Colors from "../constants/colors";
 interface HeaderChatProps {
   profilePic: string;
   userName: string;
+  searchText: string;
+  setSearchText: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const HeaderChat: React.FC<HeaderChatProps> = ({ profilePic, userName }) => {
+const HeaderChat: React.FC<HeaderChatProps> = ({
+  profilePic,
+  userName,
+  searchText,
+  setSearchText,
+}) => {
   const [searchVisible, setSearchVisible] = useState(false);
-  const [searchText, setSearchText] = useState("");
 
   const toggleSearch = () => {
     setSearchVisible(!searchVisible);
@@ -29,9 +35,8 @@ const HeaderChat: React.FC<HeaderChatProps> = ({ profilePic, userName }) => {
     setSearchText("");
   };
 
-  const handleSearch = async (text: string) => {
+  const handleSearch = (text: string) => {
     setSearchText(text);
-    // TODO: search
   };
 
   return (

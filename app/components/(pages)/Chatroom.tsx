@@ -117,6 +117,8 @@ const Chatroom = () =>{
   const {chatId, name, profilePic} = route.params;
   const [chats, setChats] = useState([]);
   const [lastDayHolderDate, setLastDayHolderDate] = useState("");
+  const [searchText, setSearchText] = useState("");
+
   useEffect(() => {
     const fetchChats = async() => {
       try{
@@ -158,50 +160,65 @@ const Chatroom = () =>{
     fetchChats();
   }, []);
 
-    const renderChatMessagesByDay = (chatData: ChatPreviewProps[]) => {
-      let renderedComponents: JSX.Element[] = [];
-      let currentDate = "";
+  const renderChatMessagesByDay = (chatData: ChatPreviewProps[]) => {
+    let renderedComponents: JSX.Element[] = [];
+    let currentDate = "";
   
-      chatData.forEach((chat: ChatPreviewProps) => {
-        const chatDate = chat.timendate.split(" ")[0];
-        if (chatDate !== currentDate) {
-          renderedComponents.push(
-            <DayHolder day={formatTimendate(chatDate)}></DayHolder>
-          );
-          currentDate = chatDate;
-        }
+    chatData.forEach((chat: ChatPreviewProps) => {
+      const chatDate = chat.timendate.split(" ")[0];
+      if (chatDate !== currentDate) {
+        renderedComponents.push(
+          <DayHolder day={formatTimendate(chatDate)}></DayHolder>
+        );
+        currentDate = chatDate;
+      }
   
-        if (chat.isRead == null) {
-          renderedComponents.push(
-            <AdminChat
-              key={chat.id}
-              content={chat.content}
-              time={chat.timendate}
-              statusRead={chat.statusRead}
-            />
-          );
-        } else {
-          renderedComponents.push(
-            <CustomerChat
-              key={chat.id}
-              content={chat.content}
-              time={chat.timendate}
-            />
-          );
-        }
-      });
+      const highlightedContent = searchText ? highlightSearchText(chat.content, searchText) : chat.content;
   
-      return renderedComponents;
+      if (chat.isRead == null) {
+        renderedComponents.push(
+          <AdminChat
+            key={chat.id}
+            content={highlightedContent}
+            time={chat.timendate}
+            statusRead={chat.statusRead}
+          />
+        );
+      } else {
+        renderedComponents.push(
+          <CustomerChat
+            key={chat.id}
+            content={highlightedContent}
+            time={chat.timendate}
+          />
+        );
+      }
+    }
+  );
+  
+    return renderedComponents;
+  };
+    const highlightSearchText = (text: string, searchText: string) => {
+      const parts = text.split(new RegExp(`(${searchText})`, "gi"));
+      return parts.map((part, index) =>
+        part.toLowerCase() === searchText.toLowerCase() ? (
+          <Text key={index} style={{ backgroundColor: "yellow" }}>
+            {part}
+          </Text>
+        ) : (
+          part
+        )
+      );
     };
 
     return(
       <SafeAreaView className="flex-1 bg-white">
         <StatusBar backgroundColor={Colors.primary1} />
-        <HeaderChat profilePic={profilePic} userName={name} />
+        <HeaderChat profilePic={profilePic} userName={name} setSearchText={setSearchText}/>
         <ScrollView backgroundColor={Colors.backgroundChat}>
           {/**dummy data */}
           {/* {renderChatMessagesByDay(dummyChats)} */}
-          {dummyChats.length > 0 && renderChatMessagesByDay(dummyChats)}
+          {/* {dummyChats.length > 0 && renderChatMessagesByDay(dummyChats)} */}
           {dummyChats.length > 0 && renderChatMessagesByDay(chats)}
         </ScrollView>
         <View className="p-[20]" backgroundColor={Colors.backgroundChat}>
