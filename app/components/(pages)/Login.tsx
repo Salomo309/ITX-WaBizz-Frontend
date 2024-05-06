@@ -38,13 +38,6 @@ const LoginPage = () => {
         showPlayServicesUpdateDialog: true,
       });
       const { idToken, user } = await GoogleSignin.signIn();
-      const googleCredential = auth.GoogleAuthProvider.credential(idToken);
-
-      // Autheticating with Firebase Auth
-      const userCredential = await auth().signInWithCredential(
-        googleCredential
-      );
-      console.log("User sign in successfully");
 
       // Fetch user active status
       const isActive = await checkUserActive(user.email);
@@ -58,6 +51,12 @@ const LoginPage = () => {
         AsyncStorage.setItem("@last_login", JSON.stringify(new Date()));
         console.log("@last_login:", JSON.stringify(new Date()));
         console.log("GO IN");
+        // Autheticating with Firebase Auth
+        const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+        const userCredential = await auth().signInWithCredential(
+          googleCredential
+        );
+        console.log("User sign in successfully");
         navigation.navigate("ChatroomList");
       } else {
         console.log("GO OUT");
@@ -83,7 +82,7 @@ const LoginPage = () => {
       console.log("MASUKKK", email);
       const user = data.Users.find((u: { Email: string }) => u.Email === email);
       console.log("Matching user:", user);
-      if (user && user.isActive) {
+      if (user && user.IsActive) {
         console.log("YES");
         return true;
       }
