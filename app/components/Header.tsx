@@ -11,7 +11,7 @@ import {
   Alert,
   TouchableHighlight,
 } from "react-native";
-import { RouteProp, useNavigation } from '@react-navigation/native';
+import { RouteProp, useNavigation } from "@react-navigation/native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import Colors from "../constants/colors";
 import Popover from "react-native-popover-view";
@@ -26,11 +26,21 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 interface HeaderProps {
   userProfilePic: string;
   setChatrooms: React.Dispatch<React.SetStateAction<ChatroomPreviewProps[]>>;
+  setChatroomsByMessage: React.Dispatch<
+    React.SetStateAction<ChatroomPreviewProps[]>
+  >;
 }
 
-type ManageUsersScreenRouteProp = NativeStackNavigationProp<RootStackParamList, 'ManageUsers'>;
+type ManageUsersScreenRouteProp = NativeStackNavigationProp<
+  RootStackParamList,
+  "ManageUsers"
+>;
 
-const Header: React.FC<HeaderProps> = ({ userProfilePic, setChatrooms }) => {
+const Header: React.FC<HeaderProps> = ({
+  userProfilePic,
+  setChatrooms,
+  setChatroomsByMessage,
+}) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [popoverVisible, setPopoverVisible] = useState(false);
   const [searchVisible, setSearchVisible] = useState(false);
@@ -41,9 +51,35 @@ const Header: React.FC<HeaderProps> = ({ userProfilePic, setChatrooms }) => {
     setSearchVisible(!searchVisible);
   };
 
-  const handleBack = () => {
+  const handleBack = async () => {
     setSearchVisible(false);
     setSearchText("");
+    try {
+      const response = await fetch(`${ApiUrl}/chatlist`);
+      if (!response.ok) {
+        throw new Error(
+          `Network response was not ok: ${response.status} ${response.statusText}`
+        );
+      }
+      const data = await response.json();
+      const allChatrooms = data.ChatList.map(
+        (chatroom: any, index: number) => ({
+          id: index + 1,
+          profilePic: "",
+          name: chatroom.customerName,
+          messagePreview: chatroom.content,
+          messageType: chatroom.messageType,
+          time: chatroom.timendate,
+          isRead: chatroom.isRead || false,
+          statusRead: chatroom.statusRead,
+          countUnread: chatroom.countUnread,
+        })
+      );
+      setChatrooms(allChatrooms);
+      setChatroomsByMessage([]);
+    } catch (error) {
+      console.error("Error searching chatrooms: ", error);
+    }
   };
 
   const handlePress = () => {
@@ -62,30 +98,89 @@ const Header: React.FC<HeaderProps> = ({ userProfilePic, setChatrooms }) => {
 
   const handleSearch = async (text: string) => {
     setSearchText(text);
-    try {
-      const response = await fetch(`${ApiUrl}/chatlist/search/contact?keyword=${text}`);
-      if (!response.ok) {
-        throw new Error(
-          `Network response was not ok: ${response.status} ${response.statusText}`
+    if (text === "") {
+      setChatroomsByMessage([]);
+      try {
+        const response = await fetch(ApiUrl.concat("/chatlist"));
+        if (!response.ok) {
+          throw new Error(
+            `Network response was not ok: ${response.status} ${response.statusText}`
+          );
+        }
+        const data = await response.json();
+        const allChatrooms = data.ChatList.map(
+          (chatroom: any, index: number) => ({
+            id: index + 1,
+            profilePic: "",
+            name: chatroom.customerName,
+            messagePreview: chatroom.content,
+            messageType: chatroom.messageType,
+            time: chatroom.timendate,
+            isRead: chatroom.isRead || false,
+            statusRead: chatroom.statusRead,
+            countUnread: chatroom.countUnread,
+          })
         );
+        setChatrooms(allChatrooms);
+      } catch (error) {
+        console.error("Error fetching all chatrooms: ", error);
       }
-      const data = await response.json();
-      const filteredChatrooms = data.ChatList.map(
-        (chatroom: any, index: number) => ({
-          id: index + 1,
-          profilePic: "",
-          name: chatroom.customerName,
-          messagePreview: chatroom.content,
-          messageType: chatroom.messageType,
-          time: chatroom.timendate,
-          isRead: chatroom.isRead || false,
-          statusRead: chatroom.statusRead,
-          countUnread: chatroom.countUnread,
-        })
-      );
-      setChatrooms(filteredChatrooms);
-    } catch (error) {
-      console.error("Error searching chatrooms: ", error);
+    } else {
+      try {
+        const contactResponse = await fetch(
+          `${ApiUrl}/chatlist/search/contact?keyword=${text}`
+        );
+        if (!contactResponse.ok) {
+          throw new Error(
+            `Network response was not ok: ${contactResponse.status} ${contactResponse.statusText}`
+          );
+        }
+        const contactData = await contactResponse.json();
+        const filteredChatroomsByContact = contactData.ChatList
+          ? contactData.ChatList.map((chatroom: any, index: number) => ({
+              id: index + 1,
+              profilePic: "",
+              name: chatroom.customerName,
+              messagePreview: chatroom.content,
+              messageType: chatroom.messageType,
+              time: chatroom.timendate,
+              isRead: chatroom.isRead || false,
+              statusRead: chatroom.statusRead,
+              countUnread: chatroom.countUnread,
+            }))
+          : [];
+        setChatrooms(filteredChatroomsByContact);
+      } catch (error) {
+        console.error("Error searching chatrooms by contact: ", error);
+      }
+
+      try {
+        const messageResponse = await fetch(
+          `${ApiUrl}/chatlist/search/message?keyword=${text}`
+        );
+        if (!messageResponse.ok) {
+          throw new Error(
+            `Network response was not ok: ${messageResponse.status} ${messageResponse.statusText}`
+          );
+        }
+        const messageData = await messageResponse.json();
+        const filteredChatroomsByMessage = messageData.ChatList
+          ? messageData.ChatList.map((chatroom: any, index: number) => ({
+              id: index + 1,
+              profilePic: "",
+              name: chatroom.customerName,
+              messagePreview: chatroom.content,
+              messageType: chatroom.messageType,
+              time: chatroom.timendate,
+              isRead: chatroom.isRead || false,
+              statusRead: chatroom.statusRead,
+              countUnread: chatroom.countUnread,
+            }))
+          : [];
+        setChatroomsByMessage(filteredChatroomsByMessage);
+      } catch (error) {
+        console.error("Error searching chatrooms by message: ", error);
+      }
     }
   };
 
@@ -96,11 +191,7 @@ const Header: React.FC<HeaderProps> = ({ userProfilePic, setChatrooms }) => {
       {!searchVisible && <Text style={styles.title}>ITX WABizz</Text>}
       {!searchVisible && (
         <TouchableOpacity onPress={toggleSearch} style={styles.icon}>
-          <Ionicons
-            name="search-sharp"
-            size={24}
-            color={Colors.white}
-          />
+          <Ionicons name="search-sharp" size={24} color={Colors.white} />
         </TouchableOpacity>
       )}
       {searchVisible && (
@@ -125,11 +216,7 @@ const Header: React.FC<HeaderProps> = ({ userProfilePic, setChatrooms }) => {
         onPress={() => setPopoverVisible(true)}
         ref={ellipsisRef}
       >
-        <Ionicons
-          name="ellipsis-vertical"
-          size={24}
-          color={Colors.white}
-        />
+        <Ionicons name="ellipsis-vertical" size={24} color={Colors.white} />
       </TouchableOpacity>
       <Popover
         popoverStyle={styles.popoverStyle}
@@ -138,8 +225,10 @@ const Header: React.FC<HeaderProps> = ({ userProfilePic, setChatrooms }) => {
         from={ellipsisRef.current}
       >
         <View style={styles.popoverContent}>
-          <TouchableOpacity style={styles.popoverItem} onPress={() =>
-                navigation.navigate('ManageUsers')}>
+          <TouchableOpacity
+            style={styles.popoverItem}
+            onPress={() => navigation.navigate("ManageUsers")}
+          >
             <Text style={styles.popoverText}>Manage Users</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.popoverItem} onPress={handlePress}>

@@ -163,6 +163,8 @@ const formatTime = (timestamp: string | number) => {
 const ChatroomList = () => {
   const navigation = useNavigation<ChatroomListNavigationProp>();
   const [chatrooms, setChatrooms] = useState<ChatroomPreviewProps[]>([]);
+  const [chatroomsByMessage, setChatroomsByMessage] = useState<ChatroomPreviewProps[]>([]);
+
   useEffect(() => {
     const fetchChatrooms = async () => {
       try {
@@ -209,10 +211,10 @@ const ChatroomList = () => {
   return (
     <SafeAreaView className="flex-1 bg-white">
       <StatusBar backgroundColor={Colors.primary1} />
-      <Header userProfilePic="https://th.bing.com/th/id/OIP.CtpCzACf2_IjRw2YX7n20AHaJ4?rs=1&pid=ImgDetMain" setChatrooms={setChatrooms}  />
+      <Header userProfilePic="https://th.bing.com/th/id/OIP.CtpCzACf2_IjRw2YX7n20AHaJ4?rs=1&pid=ImgDetMain" setChatrooms={setChatrooms} setChatroomsByMessage={setChatroomsByMessage} />
       <ScrollView>
         <View className="flex-1 items-start p-[24]">
-        <TouchableHighlight
+        {/* <TouchableHighlight
             underlayColor="#DDDDDD"
             activeOpacity={0.6}
             onPress={() =>
@@ -228,32 +230,70 @@ const ChatroomList = () => {
               statusRead={"read"}
               countUnread={"0"}
             />
-        </TouchableHighlight>
+        </TouchableHighlight> */}
 
-          {chatrooms &&
-            chatrooms.map((chatroom: ChatroomPreviewProps) => (
-              <TouchableHighlight
-                underlayColor="#DDDDDD"
-                activeOpacity={0.6}
-                onPress={() =>
-                navigation.navigate('Chatroom', {chatId: chatroom.id, name: chatroom.name, profilePic: chatroom.profilePic})}>
+        {chatrooms &&
+          chatrooms.map((chatroom: ChatroomPreviewProps) => (
+            <TouchableHighlight
+              underlayColor="#DDDDDD"
+              activeOpacity={0.6}
+              onPress={() =>
+              navigation.navigate('Chatroom', {chatId: chatroom.id, name: chatroom.name, profilePic: chatroom.profilePic})}>
+                <ChatroomPreview
+                id={chatroom.id}
+                profilePic={chatroom.profilePic}
+                name={chatroom.name}
+                messagePreview={chatroom.messagePreview}
+                messageType={chatroom.messageType}
+                time={chatroom.time}
+                isRead={chatroom.isRead}
+                statusRead={chatroom.statusRead}
+              countUnread={chatroom.countUnread}
+            />
+          </TouchableHighlight>
+          ))}
+
+          {chatroomsByMessage.length > 0 && 
+            <>
+              <Text style={styles.messagesText}>Messages</Text>
+              {chatroomsByMessage.map((chatroom: ChatroomPreviewProps) => (
+                <TouchableHighlight
+                  key={chatroom.id}
+                  underlayColor="#DDDDDD"
+                  activeOpacity={0.6}
+                  onPress={() =>
+                    navigation.navigate('Chatroom', {chatId: chatroom.id, name: chatroom.name, profilePic: chatroom.profilePic})
+                  }>
                   <ChatroomPreview
-                  id={chatroom.id}
-                  profilePic={chatroom.profilePic}
-                  name={chatroom.name}
-                  messagePreview={chatroom.messagePreview}
-                  messageType={chatroom.messageType}
-                  time={chatroom.time}
-                  isRead={chatroom.isRead}
-                  statusRead={chatroom.statusRead}
-                countUnread={chatroom.countUnread}
-              />
-            </TouchableHighlight>
-            ))}
+                    id={chatroom.id}
+                    profilePic={chatroom.profilePic}
+                    name={chatroom.name}
+                    messagePreview={chatroom.messagePreview}
+                    messageType={chatroom.messageType}
+                    time={chatroom.time}
+                    isRead={chatroom.isRead}
+                    statusRead={chatroom.statusRead}
+                    countUnread={chatroom.countUnread}
+                  />
+                </TouchableHighlight>
+              ))}
+            </>
+          }
+
         </View>
       </ScrollView>
     </SafeAreaView>
   );
 };
+
+const styles = StyleSheet.create({
+  messagesText: {
+    fontFamily: "Roboto",
+    fontWeight: "bold",
+    fontSize: 18,
+    color: "black",
+    marginBottom: 8,
+  },
+});
 
 export default ChatroomList;
