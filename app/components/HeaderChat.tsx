@@ -10,12 +10,16 @@ import {
 } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import Colors from "../constants/colors";
+import { ChatPreviewProps } from "./(pages)/Chatroom";
 
 interface HeaderChatProps {
   profilePic: string;
   userName: string;
   searchText: string;
   setSearchText: React.Dispatch<React.SetStateAction<string>>;
+  highlightedIndex: number;
+  setHighlightedIndex: React.Dispatch<React.SetStateAction<number>>;
+  chats: ChatPreviewProps[];
 }
 
 const HeaderChat: React.FC<HeaderChatProps> = ({
@@ -23,6 +27,9 @@ const HeaderChat: React.FC<HeaderChatProps> = ({
   userName,
   searchText,
   setSearchText,
+  highlightedIndex,
+  setHighlightedIndex,
+  chats,
 }) => {
   const [searchVisible, setSearchVisible] = useState(false);
 
@@ -37,6 +44,35 @@ const HeaderChat: React.FC<HeaderChatProps> = ({
 
   const handleSearch = (text: string) => {
     setSearchText(text);
+    // Reset the highlighted index when the search text changes
+    setHighlightedIndex(chats.length - 1);
+  };
+
+  const findNext = () => {
+    if (searchText) {
+      // Find the next occurrence of the search text
+      const nextIndex = chats.findIndex(
+        (chat, index) =>
+          index > highlightedIndex &&
+          chat.content.toLowerCase().includes(searchText.toLowerCase())
+      );
+      setHighlightedIndex(nextIndex !== -1 ? nextIndex : highlightedIndex);
+    }
+  };
+
+  const findPrevious = () => {
+    if (searchText) {
+      // Find the previous occurrence of the search text
+      const reversedChats = [...chats].reverse();
+      const nextIndex = reversedChats.findIndex(
+        (chat, index) =>
+          index > chats.length - highlightedIndex - 1 &&
+          chat.content.toLowerCase().includes(searchText.toLowerCase())
+      );
+      setHighlightedIndex(
+        nextIndex !== -1 ? chats.length - nextIndex - 1 : highlightedIndex
+      );
+    }
   };
 
   return (
@@ -87,6 +123,16 @@ const HeaderChat: React.FC<HeaderChatProps> = ({
           value={searchText}
           onChangeText={(text) => handleSearch(text)}
         />
+      )}
+      {searchVisible && (
+        <TouchableOpacity onPress={findPrevious} style={styles.icon}>
+          <Ionicons name="arrow-up" size={24} color={Colors.white} />
+        </TouchableOpacity>
+      )}
+      {searchVisible && (
+        <TouchableOpacity onPress={findNext} style={styles.icon}>
+          <Ionicons name="arrow-down" size={24} color={Colors.white} />
+        </TouchableOpacity>
       )}
     </View>
   );

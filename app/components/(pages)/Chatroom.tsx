@@ -40,7 +40,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ timendate, content, status, i
     );
   };
 
-interface ChatPreviewProps{
+export interface ChatPreviewProps{
   id: number,
   timendate: string;
   content: string;
@@ -118,6 +118,7 @@ const Chatroom = () =>{
   const [chats, setChats] = useState([]);
   const [lastDayHolderDate, setLastDayHolderDate] = useState("");
   const [searchText, setSearchText] = useState("");
+  const [highlightedIndex, setHighlightedIndex] = useState<number>(-1);
 
   useEffect(() => {
     const fetchChats = async() => {
@@ -164,16 +165,43 @@ const Chatroom = () =>{
     let renderedComponents: JSX.Element[] = [];
     let currentDate = "";
   
-    chatData.forEach((chat: ChatPreviewProps) => {
+    chatData.forEach((chat: ChatPreviewProps, index) => {
       const chatDate = chat.timendate.split(" ")[0];
       if (chatDate !== currentDate) {
         renderedComponents.push(
-          <DayHolder day={formatTimendate(chatDate)}></DayHolder>
+          <DayHolder day={formatTimendate(chatDate)} key={chatDate}></DayHolder>
         );
         currentDate = chatDate;
       }
   
-      const highlightedContent = searchText ? highlightSearchText(chat.content, searchText) : chat.content;
+      let highlightedContent;
+      if (searchText) {
+        if (highlightedIndex === index) {
+          const parts = chat.content.split(new RegExp(`(${searchText})`, "gi"));
+          highlightedContent = parts.map((part, index) =>
+            part.toLowerCase() === searchText.toLowerCase() ? (
+              <Text key={index} style={{ backgroundColor: "yellow" }}>
+                {part}
+              </Text>
+            ) : (
+              part
+            )
+          );
+        } else {
+          const parts = chat.content.split(new RegExp(`(${searchText})`, "gi"));
+          highlightedContent = parts.map((part, index) =>
+            part.toLowerCase() === searchText.toLowerCase() ? (
+              <Text key={index} style={{ backgroundColor: "#D3D3D3" }}>
+                {part}
+              </Text>
+            ) : (
+              part
+            )
+          );
+        }
+      } else {
+        highlightedContent = chat.content;
+      }
   
       if (chat.isRead == null) {
         renderedComponents.push(
@@ -193,28 +221,23 @@ const Chatroom = () =>{
           />
         );
       }
-    }
-  );
+    });
   
     return renderedComponents;
   };
-    const highlightSearchText = (text: string, searchText: string) => {
-      const parts = text.split(new RegExp(`(${searchText})`, "gi"));
-      return parts.map((part, index) =>
-        part.toLowerCase() === searchText.toLowerCase() ? (
-          <Text key={index} style={{ backgroundColor: "yellow" }}>
-            {part}
-          </Text>
-        ) : (
-          part
-        )
-      );
-    };
 
     return(
       <SafeAreaView className="flex-1 bg-white">
         <StatusBar backgroundColor={Colors.primary1} />
-        <HeaderChat profilePic={profilePic} userName={name} setSearchText={setSearchText}/>
+        <HeaderChat
+          profilePic={profilePic}
+          userName={name}
+          searchText={searchText}
+          setSearchText={setSearchText}
+          highlightedIndex={highlightedIndex} // Make sure to pass this prop
+          setHighlightedIndex={setHighlightedIndex} // Make sure to pass this prop
+          chats={chats}
+        />
         <ScrollView backgroundColor={Colors.backgroundChat}>
           {/**dummy data */}
           {/* {renderChatMessagesByDay(dummyChats)} */}
