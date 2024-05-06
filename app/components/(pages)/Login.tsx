@@ -6,6 +6,7 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import auth from "@react-native-firebase/auth";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import ApiUrl from "./../../constants/api";
 
 GoogleSignin.configure({
   webClientId:
@@ -36,23 +37,61 @@ const LoginPage = () => {
       await GoogleSignin.hasPlayServices({
         showPlayServicesUpdateDialog: true,
       });
-      const { idToken } = await GoogleSignin.signIn();
+      const { idToken, user } = await GoogleSignin.signIn();
       const googleCredential = auth.GoogleAuthProvider.credential(idToken);
 
+      // Autheticating with Firebase Auth
       const userCredential = await auth().signInWithCredential(
         googleCredential
       );
       console.log("User sign in successfully");
 
-      if (idToken) {
-        AsyncStorage.setItem("@user_token", idToken);
-        console.log("@user_token:", idToken);
+      // Fetch user active status
+      const isActive = await checkUserActive(user.email);
+      console.log("BALIK");
+      console.log(isActive);
+      if (isActive) {
+        if (idToken) {
+          AsyncStorage.setItem("@user_token", idToken);
+          console.log("@user_token:", idToken);
+        }
+        AsyncStorage.setItem("@last_login", JSON.stringify(new Date()));
+        console.log("@last_login:", JSON.stringify(new Date()));
+        console.log("GO IN");
+        navigation.navigate("ChatroomList");
+      } else {
+        console.log("GO OUT");
+        AsyncStorage.removeItem("@user_token");
+        auth().signOut();
+        console.log("FINAL");
       }
-      AsyncStorage.setItem("@last_login", JSON.stringify(new Date()));
-      console.log("@last_login:", JSON.stringify(new Date()));
-      navigation.navigate("ChatroomList");
     } catch (err) {
       console.log(err);
+    }
+  }
+
+  async function checkUserActive(email: string) {
+    try {
+      const response = await fetch(ApiUrl.concat("/user/all"), {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const data = await response.json();
+      console.log("Fetched user data:", data);
+      console.log("MASUKKK", email);
+      const user = data.Users.find((u: { Email: string }) => u.Email === email);
+      console.log("Matching user:", user);
+      if (user && user.isActive) {
+        console.log("YES");
+        return true;
+      }
+      console.log("NOO");
+      return false;
+    } catch (error) {
+      console.error("Error fetching user: ", error);
+      return false;
     }
   }
 
