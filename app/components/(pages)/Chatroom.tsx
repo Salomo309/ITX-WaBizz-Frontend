@@ -1,11 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  Text,
-  View,
-  ScrollView,
-  SafeAreaView,
-  StatusBar,
-} from "react-native";
+import { Text, View, ScrollView, SafeAreaView, StatusBar } from "react-native";
 import Colors from "./../../constants/colors";
 import HeaderChat from "./../HeaderChat";
 import AdminChat from "./../AdminChat";
@@ -14,38 +8,51 @@ import DayHolder from "./../DayHolder";
 import ApiUrl from "./../../constants/api";
 import { RouteProp } from "@react-navigation/native";
 import { RootStackParamList } from "App";
-import {useRoute} from "@react-navigation/native"
+import { useRoute } from "@react-navigation/native";
 import TypeBar from "../TypeBar";
 
-type ChatroomScreenRouteProp = RouteProp<RootStackParamList, 'Chatroom'>;
+type ChatroomScreenRouteProp = RouteProp<RootStackParamList, "Chatroom">;
 
 interface ChatMessageProps {
-    user_id: string;
-    timendate: string;
-    content: string;
-    status: string;
-    isRead: string;
-    messageType: string;
-  }
-
-const ChatMessage: React.FC<ChatMessageProps> = ({ timendate, content, status, isRead, messageType }) => {
-    return (
-      <View>
-        <Text>{messageType}</Text>
-        <Text>{content}</Text>
-        <Text>{status}</Text>
-        <Text>{isRead}</Text>
-        <Text>{timendate}</Text>
-      </View>
-    );
-  };
-
-export interface ChatPreviewProps{
-  id: number,
+  user_id: string;
   timendate: string;
   content: string;
-  statusRead: string;
+  status: string;
   isRead: string;
+  messageType: string;
+}
+
+interface CustomerChatProps {
+  key: React.Key;
+  content: React.ReactNode;
+  time: string;
+}
+
+const ChatMessage: React.FC<ChatMessageProps> = ({
+  timendate,
+  content,
+  status,
+  isRead,
+  messageType,
+}) => {
+  return (
+    <View>
+      <Text>{messageType}</Text>
+      <Text>{content}</Text>
+      <Text>{status}</Text>
+      <Text>{isRead}</Text>
+      <Text>{timendate}</Text>
+    </View>
+  );
+};
+
+export interface ChatPreviewProps {
+  id: number;
+  timendate: string;
+  email: string;
+  content: string;
+  statusRead: string;
+  isRead: string | null;
   messageType: string;
 }
 
@@ -81,6 +88,7 @@ const dummyChats: ChatPreviewProps[] = [
   {
     id: 1,
     timendate: "2024-04-28 12:14:12",
+    email: "",
     content: "Halo?",
     statusRead: "",
     isRead: "",
@@ -89,6 +97,7 @@ const dummyChats: ChatPreviewProps[] = [
   {
     id: 2,
     timendate: "2024-04-28 12:14:12",
+    email: "",
     content: "Selamat siang, Kakak... Ada yang bisa dibanting?",
     statusRead: "",
     isRead: null,
@@ -97,6 +106,7 @@ const dummyChats: ChatPreviewProps[] = [
   {
     id: 3,
     timendate: "2024-05-03 12:15:29",
+    email: "",
     content: "Permisi admin mw nanya",
     statusRead: "delivered",
     isRead: "",
@@ -105,6 +115,7 @@ const dummyChats: ChatPreviewProps[] = [
   {
     id: 4,
     timendate: "2024-05-03 12:15:29",
+    email: "",
     content: "Boleh, Kak",
     statusRead: "delivered",
     isRead: null,
@@ -112,25 +123,30 @@ const dummyChats: ChatPreviewProps[] = [
   },
 ];
 
-const Chatroom = () =>{
+const Chatroom = () => {
   const route = useRoute<ChatroomScreenRouteProp>();
-  const {chatId, name, profilePic} = route.params;
+  const { chatId, name, profilePic } = route.params;
   const [chats, setChats] = useState([]);
+  const [email, setEmail] = useState("");
+  const [chatroomID, setChatroomID] = useState<number>(0);
   const [lastDayHolderDate, setLastDayHolderDate] = useState("");
   const [searchText, setSearchText] = useState("");
   const [highlightedIndex, setHighlightedIndex] = useState<number>(-1);
 
   useEffect(() => {
-    const fetchChats = async() => {
-      try{
-        const response = await fetch(ApiUrl.concat("/chatroom?chatroomID="+chatId), {
-          method: "get",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
+    const fetchChats = async () => {
+      try {
+        const response = await fetch(
+          ApiUrl.concat("/chatroom?chatroomID=" + chatId),
+          {
+            method: "get",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
 
-        if (!response.ok){
+        if (!response.ok) {
           const errorMessage = `Error fetching chats: HTTP status ${response.status} - ${response.statusText}`;
           throw new Error(errorMessage);
         }
@@ -140,20 +156,24 @@ const Chatroom = () =>{
 
         const chatsData = data.Chats;
 
-        const chats = chatsData.map((chat: any) => (
-          {
-            id: chat.ChatID,
-            timendate: chat.Timendate,
-            content: chat.Content,
-            statusRead: chat.StatusRead,
-            isRead: chat.IsRead,
-            messageType: chat.MessageType,
-          })
+        const chats = chatsData.map((chat: any) => ({
+          id: chat.ChatID,
+          timendate: chat.Timendate,
+          email: chat.Email,
+          content: chat.Content,
+          statusRead: chat.StatusRead,
+          isRead: chat.IsRead,
+          messageType: chat.MessageType,
+        }));
+        chats.sort(
+          (a: ChatPreviewProps, b: ChatPreviewProps) =>
+            new Date(a.timendate).getTime() - new Date(b.timendate).getTime()
         );
-        chats.sort((a, b) => new Date(a.timendate).getTime() - new Date(b.timendate).getTime());
 
         setChats(chats);
-      } catch(error){
+        setEmail(chatsData[0].Email);
+        setChatroomID(chatsData[0].ChatroomID);
+      } catch (error) {
         console.error("Error fetching chats: ", error);
       }
     };
@@ -164,17 +184,17 @@ const Chatroom = () =>{
   const renderChatMessagesByDay = (chatData: ChatPreviewProps[]) => {
     let renderedComponents: JSX.Element[] = [];
     let currentDate = "";
-  
+
     chatData.forEach((chat: ChatPreviewProps, index) => {
       const chatDate = chat.timendate.split(" ")[0];
       if (chatDate !== currentDate) {
         renderedComponents.push(
-          <DayHolder day={formatTimendate(chatDate)} key={chatDate}></DayHolder>
+          <DayHolder day={formatTimendate(chatDate)} key={chatDate} />
         );
         currentDate = chatDate;
       }
-  
-      let highlightedContent;
+
+      let highlightedContent: React.ReactNode;
       if (searchText) {
         if (highlightedIndex === index) {
           const parts = chat.content.split(new RegExp(`(${searchText})`, "gi"));
@@ -202,7 +222,7 @@ const Chatroom = () =>{
       } else {
         highlightedContent = chat.content;
       }
-  
+
       if (chat.isRead == null) {
         renderedComponents.push(
           <AdminChat
@@ -222,33 +242,36 @@ const Chatroom = () =>{
         );
       }
     });
-  
+
     return renderedComponents;
   };
 
-    return(
-      <SafeAreaView className="flex-1 bg-white">
-        <StatusBar backgroundColor={Colors.primary1} />
-        <HeaderChat
-          profilePic={profilePic}
-          userName={name}
-          searchText={searchText}
-          setSearchText={setSearchText}
-          highlightedIndex={highlightedIndex} // Make sure to pass this prop
-          setHighlightedIndex={setHighlightedIndex} // Make sure to pass this prop
-          chats={chats}
-        />
-        <ScrollView backgroundColor={Colors.backgroundChat}>
-          {/**dummy data */}
-          {/* {renderChatMessagesByDay(dummyChats)} */}
-          {/* {dummyChats.length > 0 && renderChatMessagesByDay(dummyChats)} */}
-          {dummyChats.length > 0 && renderChatMessagesByDay(chats)}
-        </ScrollView>
-        <View className="p-[20]" backgroundColor={Colors.backgroundChat}>
-          <TypeBar></TypeBar>
-        </View>
+  return (
+    <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
+      <StatusBar backgroundColor={Colors.primary1} />
+      <HeaderChat
+        profilePic={profilePic}
+        userName={name}
+        searchText={searchText}
+        setSearchText={setSearchText}
+        highlightedIndex={highlightedIndex} // Make sure to pass this prop
+        setHighlightedIndex={setHighlightedIndex} // Make sure to pass this prop
+        chats={chats}
+      />
+      <ScrollView style={{ backgroundColor: Colors.backgroundChat }}>
+        {/**dummy data */}
+        {/* {renderChatMessagesByDay(dummyChats)} */}
+        {/* {dummyChats.length > 0 && renderChatMessagesByDay(dummyChats)} */}
+        {dummyChats.length > 0 && renderChatMessagesByDay(chats)}
+      </ScrollView>
+      <View
+        className="p-[20]"
+        style={{ backgroundColor: Colors.backgroundChat }}
+      >
+        <TypeBar chatId={chatId} email={email} chatroomId={chatroomID} />
+      </View>
     </SafeAreaView>
-    )
-}
+  );
+};
 
 export default Chatroom;

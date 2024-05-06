@@ -1,30 +1,40 @@
 import Colors from "./../constants/colors";
-import React from "react";
+import React, { useEffect } from "react";
 import { View, TextInput, TouchableOpacity, Image } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { format } from "date-fns";
 
-const TypeBar: React.FC = () => {
+interface TypeBarProps {
+  chatId: number;
+  email: string;
+  chatroomId: number;
+}
+
+const TypeBar: React.FC<TypeBarProps> = ({ chatId, email, chatroomId }) => {
   const onSendMessage = async (message: String) => {
     const messageData = {
-      ChatID: 0,
-      Email: "asep@gmail.com",
-      ChatroomID: 1,
-      Timendate: format(new Date(), "yyyy-MM-dd HH:mm:ss"), 
+      ChatID: 0, // kl ga 0 error
+      Email: email,
+      ChatroomID: chatroomId,
+      Timendate: format(new Date(), "yyyy-MM-dd HH:mm:ss"),
       IsRead: null,
       StatusRead: "sent",
       Content: message,
       MessageType: "text",
     };
     console.log(message);
+
     try {
-      const response = await fetch("https://golden-worthy-basilisk.ngrok-free.app/api/chatroom/send", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(messageData),
-      });
+      const response = await fetch(
+        "https://golden-worthy-basilisk.ngrok-free.app/api/chatroom/send",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(messageData),
+        }
+      );
       const responseData = await response.json();
       console.log("Message sent:", responseData);
     } catch (error) {
@@ -40,6 +50,7 @@ const TypeBar: React.FC = () => {
       setMessage("");
     }
   };
+
   return (
     <View
       style={{
