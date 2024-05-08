@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   View,
   StyleSheet,
@@ -45,7 +45,27 @@ const Header: React.FC<HeaderProps> = ({
   const [popoverVisible, setPopoverVisible] = useState(false);
   const [searchVisible, setSearchVisible] = useState(false);
   const [searchText, setSearchText] = useState("");
+  const [isAdmin, setIsAdmin] = useState(false);
   const ellipsisRef = useRef(null);
+
+  useEffect(() => {
+    // Function to retrieve isAdmin value from AsyncStorage
+    const retrieveIsAdminFromStorage = async () => {
+      try {
+        const isAdminValue = await AsyncStorage.getItem('isAdmin');
+        if (isAdminValue !== null) {
+          // Convert retrieved string value to boolean
+          const isAdminBool = isAdminValue === 'true';
+          setIsAdmin(isAdminBool);
+        }
+      } catch (error) {
+        console.error('Error retrieving isAdmin value:', error);
+      }
+    };
+
+    // Call the function to retrieve isAdmin value
+    retrieveIsAdminFromStorage();
+  }, []);
 
   const toggleSearch = () => {
     setSearchVisible(!searchVisible);
@@ -225,12 +245,15 @@ const Header: React.FC<HeaderProps> = ({
         from={ellipsisRef.current}
       >
         <View style={styles.popoverContent}>
-          <TouchableOpacity
-            style={styles.popoverItem}
-            onPress={() => navigation.navigate("ManageUsers")}
-          >
-            <Text style={styles.popoverText}>Manage Users</Text>
-          </TouchableOpacity>
+          {isAdmin && (
+            <TouchableOpacity
+              style={styles.popoverItem}
+              onPress={() => navigation.navigate("ManageUsers")}
+            >
+              <Text style={styles.popoverText}>Manage Users</Text>
+            </TouchableOpacity>
+          )}
+
           <TouchableOpacity style={styles.popoverItem} onPress={handlePress}>
             <Text style={styles.popoverText}>Logout</Text>
           </TouchableOpacity>

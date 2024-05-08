@@ -84,6 +84,8 @@ const LoginPage = () => {
       console.log("Matching user:", user);
       if (user && user.IsActive) {
         console.log("YES");
+        await AsyncStorage.setItem('isAdmin', user.isAdmin.toString());
+        // await AsyncStorage.setItem('isAdmin', "true");
         return true;
       }
       console.log("NOO");

@@ -17,6 +17,7 @@ import ApiUrl from "./../../constants/api";
 import { RouteProp, useRoute } from "@react-navigation/native";
 import { RootStackParamList } from "App";
 import { useState, useEffect } from "react";
+import Ionicons from "react-native-vector-icons/Ionicons";
 
 type ManageUsersScreenRouteProp = RouteProp<RootStackParamList, "ManageUsers">;
 
@@ -80,9 +81,12 @@ const User: React.FC<Users> = ({ name, email, isActive }) => {
         </Text>
       </View>
       <Switch
-        className="transform scale-110"
         value={isActiveToggle}
         onValueChange={toggleIsActive}
+        trackColor={{ false: "#767577", true: Colors.primary1 }}
+        thumbColor={isActiveToggle ? "#f4f3f4" : "#f4f3f4"}
+        ios_backgroundColor="#3e3e3e"
+        style={{ transform: [{ scaleX: 1.1 }, { scaleY: 1.1 }] }}
       />
     </View>
   );
@@ -176,53 +180,98 @@ const ManageUsers = () => {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
-      <StatusBar backgroundColor={Colors.primary1} />
-      <HeaderManageUsers />
-      <Text style={styles.titleText}>List Users</Text>
-      <ScrollView>
-        {/* Dummy data  */}
-        {users.map((user) => (
-          <User key={user.email} {...user} />
-        ))}
-        {!showTextInput && (
-          <View style={styles.addButtonContainer}>
-            <TouchableOpacity
-              style={styles.addButton}
-              onPress={handleShowTextInput}
-            >
-              <Text style={styles.buttonText}>+</Text>
-            </TouchableOpacity>
+    <View style={styles.container}>
+      <SafeAreaView style={styles.safeArea}>
+        <StatusBar backgroundColor={Colors.primary1} />
+        <HeaderManageUsers />
+        <Text style={styles.titleText}>List Users</Text>
+        <View style={styles.scrollViewContainer}>
+          <ScrollView>
+            {/* Dummy data */}
+            {users.map((user) => (
+              <User key={user.email} {...user} />
+            ))}
+          </ScrollView>
+          {/* Bottom container for adding new user */}
+          <View style={styles.bottomContainer}>
+            {!showTextInput && (
+              <View style={styles.addButtonContainer}>
+                <TouchableOpacity
+                  style={styles.addButton}
+                  onPress={handleShowTextInput}
+                >
+                  <Text style={styles.buttonText}>+</Text>
+                </TouchableOpacity>
+              </View>
+            )}
+            {/* Input field for new user */}
+            {showTextInput && (
+              <View style={styles.inputContainer}>
+                <TouchableOpacity
+                  onPress={() => setShowTextInput(false)}
+                  style={styles.backButton}
+                >
+                  <Ionicons name="arrow-back" size={20} color={Colors.black} />
+                </TouchableOpacity>
+                <TextInput
+                  style={styles.input}
+                  value={newUserEmail}
+                  onChangeText={setNewUserEmail}
+                  placeholder="Enter email"
+                />
+                <TouchableOpacity
+                  style={styles.addUserButton}
+                  onPress={handleAddUser}
+                >
+                  <Text style={styles.addUserButtonText}>Add User</Text>
+                </TouchableOpacity>
+              </View>
+            )}
           </View>
-        )}
-        {/* Input field for new user */}
-        {showTextInput && (
-          <View style={styles.inputContainer}>
-            <TextInput
-              style={styles.input}
-              value={newUserEmail}
-              onChangeText={setNewUserEmail}
-              placeholder="Enter email"
-            />
-            <TouchableOpacity
-              style={styles.addUserButton}
-              onPress={handleAddUser}
-            >
-              <Text style={styles.buttonText}>Add User</Text>
-            </TouchableOpacity>
-          </View>
-        )}
-      </ScrollView>
-    </SafeAreaView>
+        </View>
+      </SafeAreaView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+
+  safeArea: {
+    flex: 1,
+    backgroundColor: "white",
+  },
+
+  scrollViewContainer: {
+    flex: 1,
+    paddingBottom: 70,
+  },
+
+  bottomContainer: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: "white",
+    borderTopWidth: 1,
+    borderTopColor: "lightgray",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+  },
+
+  backButton: {
+    padding: 5,
+  },
   titleText: {
     fontFamily: "Roboto",
     fontWeight: "bold",
     color: "#5F6368", // Custom gray color
-    fontSize: 14, // Base font size
+    fontSize: 16, // Base font size
     textAlign: "left",
     paddingLeft: 40,
     paddingRight: 40,
@@ -230,28 +279,27 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
   },
   addButtonContainer: {
+    flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    padding: 20,
   },
   inputContainer: {
     flexDirection: "row",
     alignItems: "center",
-    paddingLeft: 40,
-    paddingRight: 40,
-    paddingTop: 25,
-    paddingBottom: 20,
+    paddingLeft: 20,
+    paddingRight: 20,
+    marginBottom: 10,
+    marginLeft: 10,
   },
   input: {
     flex: 1,
+    color: "black",
     borderColor: "gray",
     borderWidth: 1,
     borderRadius: 10,
-    padding: 10,
-    marginBottom: 10,
   },
   addButton: {
-    backgroundColor: Colors.primary2,
+    backgroundColor: Colors.primary1,
     width: 50,
     height: 50,
     borderRadius: 25,
@@ -261,7 +309,7 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   addUserButton: {
-    backgroundColor: Colors.primary2,
+    backgroundColor: Colors.primary1,
     padding: 10,
     borderRadius: 20,
     alignItems: "center",
@@ -270,6 +318,11 @@ const styles = StyleSheet.create({
     minWidth: 100,
   },
   buttonText: {
+    color: "white",
+    fontSize: 30,
+    // fontWeight: "bold",
+  },
+  addUserButtonText: {
     color: "white",
     fontSize: 16,
     fontWeight: "bold",
