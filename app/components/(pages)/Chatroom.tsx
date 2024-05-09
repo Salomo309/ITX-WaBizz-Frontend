@@ -181,6 +181,32 @@ const Chatroom = () => {
     fetchChats();
   }, []);
 
+  const checkFileType = (fileUrl: string) => {
+    // Regex pattern to match the file extension after the last dot
+    const extensionRegex = /\.([0-9a-z]+)(?:[\?#]|$)/i;
+
+    // Extract the file extension from the URL
+    const match = fileUrl.match(extensionRegex);
+    if (match) {
+      const extension = match[1].toLowerCase();
+
+      // Check if the extension corresponds to a photo or a video
+      if (extension === "jpg" || extension === "jpeg" || extension === "png") {
+        return "photo";
+      } else if (
+        extension === "mp4" ||
+        extension === "mov" ||
+        extension === "avi"
+      ) {
+        return "video";
+      } else {
+        return "unknown"; // If extension is neither photo nor video
+      }
+    } else {
+      return "unknown"; // If no extension found
+    }
+  };
+
   const renderChatMessagesByDay = (chatData: ChatPreviewProps[]) => {
     let renderedComponents: JSX.Element[] = [];
     let currentDate = "";
@@ -221,6 +247,28 @@ const Chatroom = () => {
         }
       } else {
         highlightedContent = chat.content;
+      }
+
+      // Check message type, if it is a file, then render the view depends on the file type
+      let content: React.ReactNode;
+      if (chat.messageType === "file") {
+        const fileType = checkFileType(chat.content);
+        // Render different UI based on the file type
+        if (fileType === "photo") {
+          content = (
+            <PhotoComponent key={chat.id} fileUrl={chat.content} />
+          );
+        } else if (fileType === "video") {
+          content = (
+            <VideoComponent key={chat.id} fileUrl={chat.content} />
+          );
+        } else {
+          content = (
+            <UnknownFileComponent key={chat.id} fileUrl={chat.content} />
+          )
+        }
+      } else {
+        content = chat.content;
       }
 
       if (chat.isRead == null) {
