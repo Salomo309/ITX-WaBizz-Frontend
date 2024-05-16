@@ -10,6 +10,9 @@ import { RouteProp } from "@react-navigation/native";
 import { RootStackParamList } from "App";
 import { useRoute } from "@react-navigation/native";
 import TypeBar from "../TypeBar";
+import PhotoComponent from "../PhotoComponent";
+import VideoComponent from "../VideoComponent";
+import UnknownFileComponent from "../UnknownFileComponent";
 
 type ChatroomScreenRouteProp = RouteProp<RootStackParamList, "Chatroom">;
 
