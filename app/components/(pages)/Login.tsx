@@ -7,6 +7,7 @@ import auth from "@react-native-firebase/auth";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import ApiUrl from "./../../constants/api";
+import messaging from "@react-native-firebase/messaging";
 
 GoogleSignin.configure({
     webClientId:
@@ -14,8 +15,6 @@ GoogleSignin.configure({
 });
 
 type loginScreenProp = NativeStackNavigationProp<RootStackParamList, "Login">;
-
-// WebBrowser.maybeCompleteAuthSession();
 
 interface UserData {
     google_id: string;
@@ -29,79 +28,85 @@ interface UserData {
 const LoginPage = () => {
     const [userData, setUserData] = useState<UserData | null>(null);
     const [token, setToken] = useState("");
-    const [userInfo, setUserInfo] = useState(null);
     const navigation = useNavigation<loginScreenProp>();
 
-    async function onGoogleButtonPress() {
+    useEffect(() => {
+        requestUserPermission();
+        getToken();
+    }, []);
+
+    const requestUserPermission = async () => {
+        const authStatus = await messaging().requestPermission();
+        const enabled =
+            authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+            authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+
+        if (enabled) {
+            console.log("Authorization status:", authStatus);
+        }
+    };
+
+    const getToken = async () => {
+        const token = await messaging().getToken();
+        console.log("Token =", token);
+        setToken(token);
+    };
+
+    const onGoogleButtonPress = async () => {
         try {
             await GoogleSignin.hasPlayServices({
                 showPlayServicesUpdateDialog: true,
             });
             const { idToken, user } = await GoogleSignin.signIn();
 
-            // Fetch user active status
-            const isActive = await checkUserActive(user.email);
-            console.log("BALIK");
-            console.log(isActive);
-            if (isActive) {
-                if (idToken) {
-                    AsyncStorage.setItem("@user_token", idToken);
-                    console.log("@user_token:", idToken);
-                }
-                AsyncStorage.setItem("@last_login", JSON.stringify(new Date()));
-                console.log("@last_login:", JSON.stringify(new Date()));
-                console.log("GO IN");
-                // Autheticating with Firebase Auth
-                const googleCredential =
-                    auth.GoogleAuthProvider.credential(idToken);
-                const userCredential = await auth().signInWithCredential(
-                    googleCredential
-                );
-                console.log("User sign in successfully");
-                navigation.navigate("ChatroomList");
-            } else {
-                console.log("GO OUT");
-                AsyncStorage.removeItem("@user_token");
-                auth().signOut();
-                console.log("FINAL");
-            }
-        } catch (err) {
-            console.log(err);
-        }
-    }
+            if (idToken) {
+                const loginResponse = await login(user.email, token);
 
-    async function checkUserActive(email: string) {
+                if (loginResponse && loginResponse.Message !== undefined) {
+                    await AsyncStorage.setItem(
+                        "IsAdmin",
+                        JSON.stringify(loginResponse.IsAdmin)
+                    );
+                    console.log("IsAdmin:", loginResponse.IsAdmin);
+
+                    const googleCredential =
+                        auth.GoogleAuthProvider.credential(idToken);
+                    await auth().signInWithCredential(googleCredential);
+
+                    AsyncStorage.setItem("@user_token", idToken);
+                    AsyncStorage.setItem(
+                        "@last_login",
+                        JSON.stringify(new Date())
+                    );
+
+                    console.log("User signed in successfully");
+                    navigation.navigate("ChatroomList");
+                } else {
+                    console.log("Login failed:", loginResponse?.Message);
+                }
+            }
+        } catch (error) {
+            console.log("Error during Google Sign-In:", error);
+        }
+    };
+
+    const login = async (email: string, deviceToken: string) => {
         try {
-            const response = await fetch(ApiUrl.concat("/user/all"), {
-                method: "GET",
+            const response = await fetch(ApiUrl.concat("/login"), {
+                method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
+                body: JSON.stringify({ email, device_token: deviceToken }),
             });
+
             const data = await response.json();
-            console.log("Fetched user data:", data);
-            console.log("MASUKKK", email);
-            const user = data.Users.find(
-                (u: { Email: string }) => u.Email === email
-            );
-            console.log("Matching user:", user);
-            if (user && user.IsActive) {
-                console.log("YES");
-                console.log(user.IsAdmin);
-                await AsyncStorage.setItem(
-                    "isAdmin",
-                    JSON.stringify(user.IsAdmin)
-                );
-                // await AsyncStorage.setItem('isAdmin', "true");
-                return true;
-            }
-            console.log("NOO");
-            return false;
+            console.log("Login response:", data);
+            return data;
         } catch (error) {
-            console.error("Error fetching user: ", error);
-            return false;
+            console.error("Error during login:", error);
         }
-    }
+    };
 
     return (
         <View className="flex w-full h-full items-center justify-center bg-[#cae4f3] space-y-4">
