@@ -10,6 +10,9 @@ import { RouteProp } from "@react-navigation/native";
 import { RootStackParamList } from "App";
 import { useRoute } from "@react-navigation/native";
 import TypeBar from "../TypeBar";
+import PhotoComponent from "../PhotoComponent";
+import VideoComponent from "../VideoComponent";
+import UnknownFileComponent from "../UnknownFileComponent";
 
 type ChatroomScreenRouteProp = RouteProp<RootStackParamList, "Chatroom">;
 
@@ -256,11 +259,11 @@ const Chatroom = () => {
         // Render different UI based on the file type
         if (fileType === "photo") {
           content = (
-            <PhotoComponent key={chat.id} fileUrl={chat.content} />
+            <PhotoComponent key={chat.id} fileUrl={chat.content} time={chat.timendate} statusRead={chat.statusRead} from={(chat.isRead==null) ? "admin" : "customer"} />
           );
         } else if (fileType === "video") {
           content = (
-            <VideoComponent key={chat.id} fileUrl={chat.content} />
+            <VideoComponent key={chat.id} fileUrl={chat.content} time={chat.timendate} statusRead={chat.statusRead} from={(chat.isRead==null) ? "admin" : "customer"}/>
           );
         } else {
           content = (
@@ -311,6 +314,12 @@ const Chatroom = () => {
         {/* {renderChatMessagesByDay(dummyChats)} */}
         {/* {dummyChats.length > 0 && renderChatMessagesByDay(dummyChats)} */}
         {dummyChats.length > 0 && renderChatMessagesByDay(chats)}
+        <UnknownFileComponent 
+          key={-1} 
+          fileUrl="https://www.zenius.net/blog/wp-content/uploads/2015/07/stei-itb.jpg" 
+          time={"2024-05-05 19:00:00"} 
+          statusRead="read"
+          from={"customer"}></UnknownFileComponent>
       </ScrollView>
       <View
         className="p-[20]"
