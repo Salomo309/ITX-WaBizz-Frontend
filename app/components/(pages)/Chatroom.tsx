@@ -13,6 +13,7 @@ import TypeBar from "../TypeBar";
 import PhotoComponent from "../PhotoComponent";
 import VideoComponent from "../VideoComponent";
 import UnknownFileComponent from "../UnknownFileComponent";
+import messaging from '@react-native-firebase/messaging';
 
 type ChatroomScreenRouteProp = RouteProp<RootStackParamList, "Chatroom">;
 
@@ -136,52 +137,73 @@ const Chatroom = () => {
   const [searchText, setSearchText] = useState("");
   const [highlightedIndex, setHighlightedIndex] = useState<number>(-1);
 
-  useEffect(() => {
-    const fetchChats = async () => {
-      try {
-        const response = await fetch(
-          ApiUrl.concat("/chatroom?chatroomID=" + chatId),
-          {
-            method: "get",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
-
-        if (!response.ok) {
-          const errorMessage = `Error fetching chats: HTTP status ${response.status} - ${response.statusText}`;
-          throw new Error(errorMessage);
+  const fetchChats = async () => {
+    try {
+      const response = await fetch(
+        ApiUrl.concat("/chatroom?chatroomID=" + chatId),
+        {
+          method: "get",
+          headers: {
+            "Content-Type": "application/json",
+          },
         }
+      );
 
-        const data = await response.json();
-        console.log("Chats data: ", data);
-
-        const chatsData = data.Chats;
-
-        const chats = chatsData.map((chat: any) => ({
-          id: chat.ChatID,
-          timendate: chat.Timendate,
-          email: chat.Email,
-          content: chat.Content,
-          statusRead: chat.StatusRead,
-          isRead: chat.IsRead,
-          messageType: chat.MessageType,
-        }));
-        chats.sort(
-          (a: ChatPreviewProps, b: ChatPreviewProps) =>
-            new Date(a.timendate).getTime() - new Date(b.timendate).getTime()
-        );
-
-        setChats(chats);
-        setEmail(chatsData[0].Email);
-        setChatroomID(chatsData[0].ChatroomID);
-      } catch (error) {
-        console.error("Error fetching chats: ", error);
+      if (!response.ok) {
+        const errorMessage = `Error fetching chats: HTTP status ${response.status} - ${response.statusText}`;
+        throw new Error(errorMessage);
       }
-    };
 
+      const data = await response.json();
+      console.log("Chats data: ", data);
+
+      const chatsData = data.Chats;
+
+      const chats = chatsData.map((chat: any) => ({
+        id: chat.ChatID,
+        timendate: chat.Timendate,
+        email: chat.Email,
+        content: chat.Content,
+        statusRead: chat.StatusRead,
+        isRead: chat.IsRead,
+        messageType: chat.MessageType,
+      }));
+      chats.sort(
+        (a: ChatPreviewProps, b: ChatPreviewProps) =>
+          new Date(a.timendate).getTime() - new Date(b.timendate).getTime()
+      );
+
+      setChats(chats);
+      setEmail(chatsData[0].Email);
+      setChatroomID(chatsData[0].ChatroomID);
+    } catch (error) {
+      console.error("Error fetching chats: ", error);
+    }
+  };
+  useEffect(() => {
     fetchChats();
+
+    const unsubscribeOnMessage = messaging().onMessage(async remoteMessage => {
+      console.log('Message received in foreground!', remoteMessage);
+      await fetchChats();
+    });
+
+    const unsubscribeOnTokenRefresh = messaging().onTokenRefresh(token => {
+      console.log('New FCM token:', token);
+    });
+
+    return () => {
+      unsubscribeOnMessage();
+      unsubscribeOnTokenRefresh();
+    };
+  }, [chatId]);
+
+  useEffect(() => {
+    messaging().setBackgroundMessageHandler(async remoteMessage => {
+      console.log('Message handled in the background!', remoteMessage);
+      // Fetch chats data and update state
+      await fetchChats();
+    });
   }, []);
 
   const checkFileType = (fileUrl: string) => {
