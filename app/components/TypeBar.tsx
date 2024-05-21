@@ -52,7 +52,7 @@ const TypeBar: React.FC<TypeBarProps> = ({ chatId, email, chatroomId }) => {
     }
   };
 
-  const handleAttachPress = async () => {
+  const handleAttachPressFile = async () => {
     try {
       const res = await DocumentPicker.pick({
         type: [DocumentPicker.types.allFiles],
@@ -60,6 +60,7 @@ const TypeBar: React.FC<TypeBarProps> = ({ chatId, email, chatroomId }) => {
   
       res.forEach(file => {
         console.log('Selected file URI:', file.uri);
+        onSendMessage(file.uri)
       });
       
     } catch (err) {
@@ -70,6 +71,27 @@ const TypeBar: React.FC<TypeBarProps> = ({ chatId, email, chatroomId }) => {
       }
     }
   };
+
+  const handleAttachPressPhoto = async () => {
+    try {
+      const res = await DocumentPicker.pick({
+        type: [DocumentPicker.types.images],
+      });
+  
+      res.forEach(file => {
+        console.log('Selected file URI:', file.uri);
+        onSendMessage(file.uri);
+      });
+      
+    } catch (err) {
+      if (DocumentPicker.isCancel(err)) {
+        console.log('User cancelled the file picker');
+      } else {
+        console.error('Unknown error: ', err);
+      }
+    }
+  };
+  
   
 
   return (
@@ -93,7 +115,7 @@ const TypeBar: React.FC<TypeBarProps> = ({ chatId, email, chatroomId }) => {
         multiline
         numberOfLines={2}
       />
-      <TouchableOpacity onPress={handleAttachPress}>
+      <TouchableOpacity onPress={handleAttachPressFile}>
         <Ionicons
           name="attach-sharp"
           size={25}
@@ -104,12 +126,14 @@ const TypeBar: React.FC<TypeBarProps> = ({ chatId, email, chatroomId }) => {
           }}
         />
       </TouchableOpacity>
-      <Ionicons
-        name="camera-sharp"
-        size={22}
-        color={Colors.gray}
-        style={{ marginRight: 10 }}
-      />
+      <TouchableOpacity onPress={handleAttachPressPhoto}>
+        <Ionicons
+          name="camera-sharp"
+          size={22}
+          color={Colors.gray}
+          style={{ marginRight: 10 }}
+        />
+      </TouchableOpacity>
       <TouchableOpacity onPress={sendMessage}>
         <Ionicons
           name="send-sharp"

@@ -336,12 +336,12 @@ const Chatroom = () => {
         {/* {renderChatMessagesByDay(dummyChats)} */}
         {/* {dummyChats.length > 0 && renderChatMessagesByDay(dummyChats)} */}
         {dummyChats.length > 0 && renderChatMessagesByDay(chats)}
-        <UnknownFileComponent 
+        {/* <UnknownFileComponent 
           key={-1} 
           fileUrl="https://www.zenius.net/blog/wp-content/uploads/2015/07/stei-itb.jpg" 
           time={"2024-05-05 19:00:00"} 
           statusRead="read"
-          from={"customer"}></UnknownFileComponent>
+          from={"customer"}></UnknownFileComponent> */}
       </ScrollView>
       <View
         className="p-[20]"
