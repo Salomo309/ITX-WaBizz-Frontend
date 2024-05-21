@@ -14,7 +14,7 @@ interface TypeBarProps {
 const TypeBar: React.FC<TypeBarProps> = ({ chatId, email, chatroomId }) => {
   const [message, setMessage] = useState("");
 
-  const onSendMessage = async (message: string) => {
+  const onSendMessage = async (message: string, messageType: string) => {
     const messageData = {
       ChatID: 0, // kl ga 0 error
       Email: email,
@@ -23,9 +23,9 @@ const TypeBar: React.FC<TypeBarProps> = ({ chatId, email, chatroomId }) => {
       IsRead: null,
       StatusRead: "sent",
       Content: message,
-      MessageType: "text",
+      MessageType: messageType,
     };
-    console.log(message);
+    console.log(messageData);
 
     try {
       const response = await fetch(
@@ -47,7 +47,7 @@ const TypeBar: React.FC<TypeBarProps> = ({ chatId, email, chatroomId }) => {
 
   const sendMessage = () => {
     if (message.trim() !== "") {
-      onSendMessage(message);
+      onSendMessage(message, "text");
       setMessage("");
     }
   };
@@ -60,7 +60,7 @@ const TypeBar: React.FC<TypeBarProps> = ({ chatId, email, chatroomId }) => {
   
       res.forEach(file => {
         console.log('Selected file URI:', file.uri);
-        onSendMessage(file.uri)
+        onSendMessage(file.uri, file.type?.startsWith("image/") ? "photo" : file.type?.startsWith("video/") ? "video" : "file");
       });
       
     } catch (err) {
@@ -75,12 +75,12 @@ const TypeBar: React.FC<TypeBarProps> = ({ chatId, email, chatroomId }) => {
   const handleAttachPressPhoto = async () => {
     try {
       const res = await DocumentPicker.pick({
-        type: [DocumentPicker.types.images],
+        type: [DocumentPicker.types.images, DocumentPicker.types.video],
       });
   
       res.forEach(file => {
         console.log('Selected file URI:', file.uri);
-        onSendMessage(file.uri);
+        onSendMessage(file.uri, file.type?.startsWith("image/") ? "photo" : file.type?.startsWith("video/") ? "video" : "file");
       });
       
     } catch (err) {
