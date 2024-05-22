@@ -205,7 +205,7 @@ const Chatroom = () => {
       unsubscribeOnMessage();
       unsubscribeOnTokenRefresh();
     };
-  }, [chatId]);
+  }, [chats]);
 
   useEffect(() => {
     messaging().setBackgroundMessageHandler(async remoteMessage => {
