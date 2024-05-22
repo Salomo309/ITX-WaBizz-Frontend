@@ -29,7 +29,7 @@ const VideoComponent: React.FC<VideoComponentProps> = ({ fileUrl, time, statusRe
             >
                 <View className="relative">
                     <Image
-                        source={{ uri: fileUrl }}
+                        source={{ uri: `data:image/jpeg;base64,${fileUrl}` }}
                         style={{ width: 250, height: 250 }}
                     />
                     <View style={{

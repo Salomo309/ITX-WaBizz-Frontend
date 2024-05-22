@@ -24,6 +24,7 @@ interface ChatMessageProps {
   status: string;
   isRead: string;
   messageType: string;
+  file: any;
 }
 
 interface CustomerChatProps {
@@ -58,7 +59,7 @@ export interface ChatPreviewProps {
   statusRead: string;
   isRead: string | null;
   messageType: string;
-  // file: any;
+  file: any;
 }
 
 const formatTimendate = (timestamp: string | number) => {
@@ -89,44 +90,48 @@ const formatTimendate = (timestamp: string | number) => {
 };
 
 // dummy data
-// const dummyChats: ChatPreviewProps[] = [
-//   {
-//     id: 1,
-//     timendate: "2024-04-28 12:14:12",
-//     email: "",
-//     content: "Halo?",
-//     statusRead: "",
-//     isRead: "",
-//     messageType: "",
-//   },
-//   {
-//     id: 2,
-//     timendate: "2024-04-28 12:14:12",
-//     email: "",
-//     content: "Selamat siang, Kakak... Ada yang bisa dibanting?",
-//     statusRead: "",
-//     isRead: null,
-//     messageType: "",
-//   },
-//   {
-//     id: 3,
-//     timendate: "2024-05-03 12:15:29",
-//     email: "",
-//     content: "Permisi admin mw nanya",
-//     statusRead: "delivered",
-//     isRead: "",
-//     messageType: "",
-//   },
-//   {
-//     id: 4,
-//     timendate: "2024-05-03 12:15:29",
-//     email: "",
-//     content: "Boleh, Kak",
-//     statusRead: "delivered",
-//     isRead: null,
-//     messageType: "",
-//   },
-// ];
+const dummyChats: ChatPreviewProps[] = [
+  {
+    id: 1,
+    timendate: "2024-04-28 12:14:12",
+    email: "",
+    content: "Halo?",
+    statusRead: "",
+    isRead: "",
+    messageType: "",
+    file: null
+  },
+  {
+    id: 2,
+    timendate: "2024-04-28 12:14:12",
+    email: "",
+    content: "Selamat siang, Kakak... Ada yang bisa dibanting?",
+    statusRead: "",
+    isRead: null,
+    messageType: "",
+    file: null
+  },
+  {
+    id: 3,
+    timendate: "2024-05-03 12:15:29",
+    email: "",
+    content: "Permisi admin mw nanya",
+    statusRead: "delivered",
+    isRead: "",
+    messageType: "",
+    file: null
+  },
+  {
+    id: 4,
+    timendate: "2024-05-03 12:15:29",
+    email: "",
+    content: "Boleh, Kak",
+    statusRead: "delivered",
+    isRead: null,
+    messageType: "",
+    file: null
+  },
+];
 
 const Chatroom = () => {
   const route = useRoute<ChatroomScreenRouteProp>();
@@ -282,7 +287,7 @@ const Chatroom = () => {
       // let content: React.ReactNode;
       if (chat.messageType === "photo") {
         renderedComponents.push(
-          <PhotoComponent key={chat.id} fileUrl={chat.content} time={chat.timendate} statusRead={chat.statusRead} from={(chat.isRead==null) ? "admin" : "customer"}></PhotoComponent>
+          <PhotoComponent key={chat.id} fileUrl={chat.file} time={chat.timendate} statusRead={chat.statusRead} from={(chat.isRead==null) ? "admin" : "customer"}></PhotoComponent>
         )
       } else if (chat.messageType === "video") {
         renderedComponents.push(

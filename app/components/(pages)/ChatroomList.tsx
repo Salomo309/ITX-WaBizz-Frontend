@@ -247,7 +247,20 @@ const ChatroomList = () => {
                 id={chatroom.id}
                 profilePic={chatroom.profilePic}
                 name={chatroom.name}
-                messagePreview={chatroom.messagePreview}
+                messagePreview={chatroom.messageType=="text" ? chatroom.messagePreview : (chatroom.messageType=="photo" ? "photo" : chatroom.messageType=="video" ? "video" : "file")}
+                // messagePreview={() => {
+                //   switch (chatroom.messageType) {
+                //     case "text":
+                //       return chatroom.messagePreview;
+                //     case "photo":
+                //       return "photo";
+                //     case "video":
+                //       return "video";
+                //     default:
+                //       return "";
+                //   }
+                // }}
+                
                 messageType={chatroom.messageType}
                 time={chatroom.time}
                 isRead={chatroom.isRead}
@@ -272,7 +285,19 @@ const ChatroomList = () => {
                     id={chatroom.id}
                     profilePic={chatroom.profilePic}
                     name={chatroom.name}
-                    messagePreview={chatroom.messagePreview}
+                    messagePreview={chatroom.messageType=="text" ? chatroom.messagePreview : (chatroom.messageType=="photo" ? "photo" : chatroom.messageType=="video" ? "video" : "file")}
+                    // messagePreview={() => {
+                    //   switch (chatroom.messageType) {
+                    //     case "text":
+                    //       return chatroom.messagePreview;
+                    //     case "photo":
+                    //       return "photo";
+                    //     case "video":
+                    //       return "video";
+                    //     default:
+                    //       return "";
+                    //   }
+                    // }}
                     messageType={chatroom.messageType}
                     time={chatroom.time}
                     isRead={chatroom.isRead}

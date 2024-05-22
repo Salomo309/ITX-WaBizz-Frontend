@@ -5,7 +5,7 @@ import {
     Image,
     Text,
 } from "react-native";
-import RNFS from 'react-native-fs';
+// import RNFS from 'react-native-fs';
 
 interface PhotoComponentProps {
     key: number;
@@ -35,6 +35,19 @@ const PhotoComponent: React.FC<PhotoComponentProps> = ({ fileUrl, time, statusRe
 
 //     loadImage();
 //   }, [fileUrl]);
+    // const [imageUri, setImageUri] = useState<string | null>(null);
+
+    // useEffect(() => {
+    // // Create a blob from the binary data
+    // const blob = new Blob([fileUrl], { type: "image/jpeg" }); // Adjust type as needed
+
+    // // Create a URL for the blob
+    // const uri = URL.createObjectURL(blob);
+    // setImageUri(uri);
+
+    // // Cleanup function to revoke the URL when component unmounts
+    // return () => URL.revokeObjectURL(uri);
+    // }, [fileUrl]);
 
     return (
         (from=="admin") ?
@@ -44,7 +57,8 @@ const PhotoComponent: React.FC<PhotoComponentProps> = ({ fileUrl, time, statusRe
             >
                 <View className="relative">
                     <Image
-                        source={{ uri: fileUrl }}
+                        // source={{ uri: fileUrl }}
+                        source={{ uri: `data:image/jpeg;base64,${fileUrl}` }}
                         // source={{ uri: imageData }}
                         style={{ width: 250, height: 250 }}
                     />
