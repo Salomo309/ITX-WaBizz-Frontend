@@ -211,7 +211,7 @@ const ChatroomList = () => {
     };
 
     fetchChatrooms();
-  }, []);
+  }, [chatrooms]);
   return (
     <SafeAreaView className="flex-1 bg-white">
       <StatusBar backgroundColor={Colors.primary1} />
