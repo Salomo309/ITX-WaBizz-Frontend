@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { View, TextInput, TouchableOpacity } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { format } from "date-fns";
-import DocumentPicker from 'react-native-document-picker';
+import DocumentPicker, { types } from 'react-native-document-picker';
 import Colors from "./../constants/colors";
 
 interface TypeBarProps {
@@ -14,7 +14,7 @@ interface TypeBarProps {
 const TypeBar: React.FC<TypeBarProps> = ({ chatId, email, chatroomId }) => {
   const [message, setMessage] = useState("");
 
-  const onSendMessage = async (message: string, messageType: string) => {
+  const onSendMessage = async (message: string, file, messageType: string) => {
     const messageData = {
       ChatID: 0, // kl ga 0 error
       Email: email,
@@ -26,28 +26,33 @@ const TypeBar: React.FC<TypeBarProps> = ({ chatId, email, chatroomId }) => {
       MessageType: messageType,
     };
     console.log(messageData);
-
+  
     try {
+      const formData = new FormData();
+      formData.append('chatJSON', JSON.stringify(messageData));
+      
+      if (messageType !== 'text') {
+        formData.append('file', file);
+      }
+  
       const response = await fetch(
         "https://golden-worthy-basilisk.ngrok-free.app/api/chatroom/send",
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(messageData),
+          body: formData,
         }
       );
+  
       const responseData = await response.json();
       console.log("Message sent:", responseData);
     } catch (error) {
       console.error("Failed to send message:", error);
     }
-  };
+  };  
 
   const sendMessage = () => {
     if (message.trim() !== "") {
-      onSendMessage(message, "text");
+      onSendMessage(message, null, "text");
       setMessage("");
     }
   };
@@ -60,7 +65,7 @@ const TypeBar: React.FC<TypeBarProps> = ({ chatId, email, chatroomId }) => {
   
       res.forEach(file => {
         console.log('Selected file URI:', file.uri);
-        onSendMessage(file.uri, file.type?.startsWith("image/") ? "photo" : file.type?.startsWith("video/") ? "video" : "file");
+        onSendMessage(file.uri, file, file.type?.startsWith("image/") ? "photo" : file.type?.startsWith("video/") ? "video" : "file");
       });
       
     } catch (err) {
@@ -80,7 +85,7 @@ const TypeBar: React.FC<TypeBarProps> = ({ chatId, email, chatroomId }) => {
   
       res.forEach(file => {
         console.log('Selected file URI:', file.uri);
-        onSendMessage(file.uri, file.type?.startsWith("image/") ? "photo" : file.type?.startsWith("video/") ? "video" : "file");
+        onSendMessage(file.uri, file, file.type?.startsWith("image/") ? "photo" : file.type?.startsWith("video/") ? "video" : "file");
       });
       
     } catch (err) {

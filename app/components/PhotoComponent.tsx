@@ -5,10 +5,11 @@ import {
     Image,
     Text,
 } from "react-native";
+import RNFS from 'react-native-fs';
 
 interface PhotoComponentProps {
     key: number;
-    fileUrl: string;
+    // fileUrl: any;
     time: string;
     statusRead: string
     from: string;
@@ -20,6 +21,21 @@ const formatTimeBubbleChat = (timestamp: string | number) => {
 };
 
 const PhotoComponent: React.FC<PhotoComponentProps> = ({ fileUrl, time, statusRead, from }) => {
+//     const [imageData, setImageData] = useState<string | null>(null);
+
+//   useEffect(() => {
+//     const loadImage = async () => {
+//       try {
+//         const base64Data = await RNFS.readFile(fileUrl, 'base64');
+//         setImageData(`data:image/jpeg;base64,${base64Data}`);
+//       } catch (error) {
+//         console.error("Error loading image:", error);
+//       }
+//     };
+
+//     loadImage();
+//   }, [fileUrl]);
+
     return (
         (from=="admin") ?
             <View
@@ -29,6 +45,7 @@ const PhotoComponent: React.FC<PhotoComponentProps> = ({ fileUrl, time, statusRe
                 <View className="relative">
                     <Image
                         source={{ uri: fileUrl }}
+                        // source={{ uri: imageData }}
                         style={{ width: 250, height: 250 }}
                     />
                     <Text

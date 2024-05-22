@@ -58,6 +58,7 @@ export interface ChatPreviewProps {
   statusRead: string;
   isRead: string | null;
   messageType: string;
+  // file: any;
 }
 
 const formatTimendate = (timestamp: string | number) => {
@@ -88,44 +89,44 @@ const formatTimendate = (timestamp: string | number) => {
 };
 
 // dummy data
-const dummyChats: ChatPreviewProps[] = [
-  {
-    id: 1,
-    timendate: "2024-04-28 12:14:12",
-    email: "",
-    content: "Halo?",
-    statusRead: "",
-    isRead: "",
-    messageType: "",
-  },
-  {
-    id: 2,
-    timendate: "2024-04-28 12:14:12",
-    email: "",
-    content: "Selamat siang, Kakak... Ada yang bisa dibanting?",
-    statusRead: "",
-    isRead: null,
-    messageType: "",
-  },
-  {
-    id: 3,
-    timendate: "2024-05-03 12:15:29",
-    email: "",
-    content: "Permisi admin mw nanya",
-    statusRead: "delivered",
-    isRead: "",
-    messageType: "",
-  },
-  {
-    id: 4,
-    timendate: "2024-05-03 12:15:29",
-    email: "",
-    content: "Boleh, Kak",
-    statusRead: "delivered",
-    isRead: null,
-    messageType: "",
-  },
-];
+// const dummyChats: ChatPreviewProps[] = [
+//   {
+//     id: 1,
+//     timendate: "2024-04-28 12:14:12",
+//     email: "",
+//     content: "Halo?",
+//     statusRead: "",
+//     isRead: "",
+//     messageType: "",
+//   },
+//   {
+//     id: 2,
+//     timendate: "2024-04-28 12:14:12",
+//     email: "",
+//     content: "Selamat siang, Kakak... Ada yang bisa dibanting?",
+//     statusRead: "",
+//     isRead: null,
+//     messageType: "",
+//   },
+//   {
+//     id: 3,
+//     timendate: "2024-05-03 12:15:29",
+//     email: "",
+//     content: "Permisi admin mw nanya",
+//     statusRead: "delivered",
+//     isRead: "",
+//     messageType: "",
+//   },
+//   {
+//     id: 4,
+//     timendate: "2024-05-03 12:15:29",
+//     email: "",
+//     content: "Boleh, Kak",
+//     statusRead: "delivered",
+//     isRead: null,
+//     messageType: "",
+//   },
+// ];
 
 const Chatroom = () => {
   const route = useRoute<ChatroomScreenRouteProp>();
@@ -155,9 +156,11 @@ const Chatroom = () => {
       }
 
       const data = await response.json();
-      console.log("Chats data: ", data);
+      console.log("Chats data: ", data.Chats);
+      console.log("Chat Files data: ", data.Files);
 
       const chatsData = data.Chats;
+      const chatFilesData = data.Files;
 
       const chats = chatsData.map((chat: any) => ({
         id: chat.ChatID,
@@ -167,6 +170,7 @@ const Chatroom = () => {
         statusRead: chat.StatusRead,
         isRead: chat.IsRead,
         messageType: chat.MessageType,
+        file: chatFilesData[chat.ChatID]
       }));
       chats.sort(
         (a: ChatPreviewProps, b: ChatPreviewProps) =>
@@ -275,44 +279,58 @@ const Chatroom = () => {
       }
 
       // Check message type, if it is a file, then render the view depends on the file type
-      let content: React.ReactNode;
-      if (chat.messageType === "file") {
-        const fileType = checkFileType(chat.content);
-        // Render different UI based on the file type
-        if (fileType === "photo") {
-          content = (
-            <PhotoComponent key={chat.id} fileUrl={chat.content} time={chat.timendate} statusRead={chat.statusRead} from={(chat.isRead==null) ? "admin" : "customer"} />
-          );
-        } else if (fileType === "video") {
-          content = (
-            <VideoComponent key={chat.id} fileUrl={chat.content} time={chat.timendate} statusRead={chat.statusRead} from={(chat.isRead==null) ? "admin" : "customer"}/>
+      // let content: React.ReactNode;
+      if (chat.messageType === "photo") {
+        renderedComponents.push(
+          <PhotoComponent key={chat.id} fileUrl={chat.content} time={chat.timendate} statusRead={chat.statusRead} from={(chat.isRead==null) ? "admin" : "customer"}></PhotoComponent>
+        )
+      } else if (chat.messageType === "video") {
+        renderedComponents.push(
+          <VideoComponent key={chat.id} fileUrl={chat.content} time={chat.timendate} statusRead={chat.statusRead} from={(chat.isRead==null) ? "admin" : "customer"}></VideoComponent>
+        )
+      } else if (chat.messageType === "file") {
+        renderedComponents.push(
+          <UnknownFileComponent key={chat.id} fileUrl={chat.content} time={chat.timendate} statusRead={chat.statusRead} from={(chat.isRead==null) ? "admin" : "customer"}></UnknownFileComponent>
+        )
+      } else {
+        // if (chat.messageType === "file") {
+        //   const fileType = checkFileType(chat.content);
+        //   // Render different UI based on the file type
+        //   if (fileType === "photo") {
+        //     content = (
+        //       <PhotoComponent key={chat.id} fileUrl={chat.content} time={chat.timendate} statusRead={chat.statusRead} from={(chat.isRead==null) ? "admin" : "customer"} />
+        //     );
+        //   } else if (fileType === "video") {
+        //     content = (
+        //       <VideoComponent key={chat.id} fileUrl={chat.content} time={chat.timendate} statusRead={chat.statusRead} from={(chat.isRead==null) ? "admin" : "customer"}/>
+        //     );
+        //   } else {
+        //     content = (
+        //       <UnknownFileComponent key={chat.id} fileUrl={chat.content} />
+        //     )
+        //   }
+        // } else {
+        //   content = chat.content;
+        // }
+  
+        if (chat.isRead == null) {
+          renderedComponents.push(
+            <AdminChat
+              key={chat.id}
+              content={highlightedContent}
+              time={chat.timendate}
+              statusRead={chat.statusRead}
+            />
           );
         } else {
-          content = (
-            <UnknownFileComponent key={chat.id} fileUrl={chat.content} />
-          )
+          renderedComponents.push(
+            <CustomerChat
+              key={chat.id}
+              content={highlightedContent}
+              time={chat.timendate}
+            />
+          );
         }
-      } else {
-        content = chat.content;
-      }
-
-      if (chat.isRead == null) {
-        renderedComponents.push(
-          <AdminChat
-            key={chat.id}
-            content={highlightedContent}
-            time={chat.timendate}
-            statusRead={chat.statusRead}
-          />
-        );
-      } else {
-        renderedComponents.push(
-          <CustomerChat
-            key={chat.id}
-            content={highlightedContent}
-            time={chat.timendate}
-          />
-        );
       }
     });
 
