@@ -116,7 +116,7 @@ const ChatroomPreview: React.FC<ChatroomPreviewProps> = ({
         <Text className="font-[Roboto] font-medium text-sm text-black">
           {formatTime(time)}
         </Text>
-      ) : (
+      ) : ((parseInt(countUnread) > 0) ? (
         <View className="w-auto flex-shrink-0 flex-column items-end justify-center">
           <Text className="font-[Roboto] font-bold text-sm text-primary-1">
             {formatTime(time)}
@@ -127,7 +127,11 @@ const ChatroomPreview: React.FC<ChatroomPreviewProps> = ({
             </Text>
           </View>
         </View>
-      )}
+      ) : (
+        <Text className="font-[Roboto] font-medium text-sm text-black">
+          {formatTime(time)}
+        </Text>
+      ))}
     </View>
   );
 };

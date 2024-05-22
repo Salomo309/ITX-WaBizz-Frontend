@@ -9,7 +9,7 @@ import RNFS from 'react-native-fs';
 
 interface PhotoComponentProps {
     key: number;
-    // fileUrl: any;
+    fileUrl: any;
     time: string;
     statusRead: string
     from: string;
