@@ -52,7 +52,7 @@ const Header: React.FC<HeaderProps> = ({
         // Function to retrieve isAdmin value from AsyncStorage
         const retrieveIsAdminFromStorage = async () => {
             try {
-                const isAdminValue = await AsyncStorage.getItem("isAdmin");
+                const isAdminValue = await AsyncStorage.getItem("IsAdmin");
                 if (isAdminValue !== null) {
                     // Convert retrieved string value to boolean
                     const isAdminBool = isAdminValue === "true";
