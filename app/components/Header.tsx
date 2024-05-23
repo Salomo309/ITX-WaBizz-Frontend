@@ -75,7 +75,17 @@ const Header: React.FC<HeaderProps> = ({
         setSearchVisible(false);
         setSearchText("");
         try {
-            const response = await fetch(`${ApiUrl}/chatlist`);
+            const email = await AsyncStorage.getItem("Email");
+            if (!email) {
+                throw new Error("Email not found in storage");
+            }
+            const parsedEmail = JSON.parse(email);
+            const response = await fetch(`${ApiUrl}/chatlist`, {
+                headers: {
+                    Authorization: `Bearer ${parsedEmail}`,
+                    "Content-Type": "application/json",
+                },
+            });
             if (!response.ok) {
                 throw new Error(
                     `Network response was not ok: ${response.status} ${response.statusText}`
@@ -110,6 +120,7 @@ const Header: React.FC<HeaderProps> = ({
     const handleLogout = async () => {
         try {
             await AsyncStorage.removeItem("UserToken");
+            await AsyncStorage.removeItem("Email");
             auth().signOut();
         } catch (err) {
             Alert.alert("Logout Failed", "Unable to logout. Please try again");
@@ -121,7 +132,17 @@ const Header: React.FC<HeaderProps> = ({
         if (text === "") {
             setChatroomsByMessage([]);
             try {
-                const response = await fetch(ApiUrl.concat("/chatlist"));
+                const email = await AsyncStorage.getItem("Email");
+                if (!email) {
+                    throw new Error("Email not found in storage");
+                }
+                const parsedEmail = JSON.parse(email);
+                const response = await fetch(`${ApiUrl}/chatlist`, {
+                    headers: {
+                        Authorization: `Bearer ${parsedEmail}`,
+                        "Content-Type": "application/json",
+                    },
+                });
                 if (!response.ok) {
                     throw new Error(
                         `Network response was not ok: ${response.status} ${response.statusText}`
@@ -147,8 +168,19 @@ const Header: React.FC<HeaderProps> = ({
             }
         } else {
             try {
+                const email = await AsyncStorage.getItem("Email");
+                if (!email) {
+                    throw new Error("Email not found in storage");
+                }
+                const parsedEmail = JSON.parse(email);
                 const contactResponse = await fetch(
-                    `${ApiUrl}/chatlist/search/contact?keyword=${text}`
+                    `${ApiUrl}/chatlist/search/contact?keyword=${text}`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${parsedEmail}`,
+                            "Content-Type": "application/json",
+                        },
+                    }
                 );
                 if (!contactResponse.ok) {
                     throw new Error(
@@ -177,8 +209,19 @@ const Header: React.FC<HeaderProps> = ({
             }
 
             try {
+                const email = await AsyncStorage.getItem("Email");
+                if (!email) {
+                    throw new Error("Email not found in storage");
+                }
+                const parsedEmail = JSON.parse(email);
                 const messageResponse = await fetch(
-                    `${ApiUrl}/chatlist/search/message?keyword=${text}`
+                    `${ApiUrl}/chatlist/search/message?keyword=${text}`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${parsedEmail}`,
+                            "Content-Type": "application/json",
+                        },
+                    }
                 );
                 if (!messageResponse.ok) {
                     throw new Error(

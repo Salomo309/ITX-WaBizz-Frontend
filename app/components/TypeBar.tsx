@@ -5,6 +5,7 @@ import { format } from "date-fns";
 import DocumentPicker, { types } from 'react-native-document-picker';
 import Colors from "./../constants/colors";
 import ApiUrl from "./../constants/api";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 interface TypeBarProps {
   chatId: number;
@@ -36,10 +37,20 @@ const TypeBar: React.FC<TypeBarProps> = ({ chatId, email, chatroomId }) => {
         formData.append('file', file);
       }
   
+      const userEmail = await AsyncStorage.getItem("Email");
+      if (!userEmail) {
+        throw new Error("Email not found in storage");
+    }
+
+    const parsedEmail = JSON.parse(userEmail);
+
       const response = await fetch(ApiUrl.concat("/chatroom/send"),
         {
           method: "POST",
           body: formData,
+          headers: {
+            'Authorization': `Bearer ${parsedEmail}`,
+          }
         }
       );
       

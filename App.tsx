@@ -21,7 +21,7 @@ export default function App() {
     const [isLoggedIn, setLoggedIn] = useState(false);
 
     const checkLoginStatus = async () => {
-        const lastLoginString = await AsyncStorage.getItem("@last_login");
+        const lastLoginString = await AsyncStorage.getItem("LastLogin");
         if (lastLoginString) {
             const lastLogin = new Date(JSON.parse(lastLoginString));
             const now = new Date();
@@ -37,7 +37,7 @@ export default function App() {
             const userIsLoggedIn = !!user;
             setLoggedIn(userIsLoggedIn);
             if (userIsLoggedIn) {
-                AsyncStorage.setItem("@last_login", JSON.stringify(new Date()));
+                AsyncStorage.setItem("LastLogin", JSON.stringify(new Date()));
             }
         });
     };

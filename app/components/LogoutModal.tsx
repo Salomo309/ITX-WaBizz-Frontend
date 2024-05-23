@@ -14,15 +14,24 @@ const LogoutModal = ({ isVisible, onClose }: ModalProps) => {
     const handleLogout = async () => {
         try {
             const userEmail = await AsyncStorage.getItem("Email");
+            if (!userEmail) {
+                throw new Error("Email not found in storage");
+            }
+
+            const parsedEmail = JSON.parse(userEmail);
             const response = await fetch(ApiUrl.concat("/logout"), {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
+                    "Authorization": `Bearer ${parsedEmail}`,
                 },
                 body: JSON.stringify({
                     Email: userEmail,
                 }),
             });
+            if (!response.ok) {
+                throw new Error(`Failed to logout: ${response.status} ${response.statusText}`);
+            }
             await AsyncStorage.removeItem("UserToken");
             await AsyncStorage.removeItem("Email");
             auth().signOut();

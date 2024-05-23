@@ -87,7 +87,7 @@ const LoginPage = () => {
 
                     AsyncStorage.setItem("UserToken", idToken);
                     AsyncStorage.setItem(
-                        "@last_login",
+                        "LastLogin",
                         JSON.stringify(new Date())
                     );
 
@@ -119,7 +119,12 @@ const LoginPage = () => {
                 }),
             });
             console.log("AAA" + deviceToken);
-
+            console.log(
+                JSON.stringify({
+                    Email: email,
+                    DeviceToken: deviceToken,
+                })
+            );
             const data = await response.json();
             console.log("Login response:", data);
             return data;
