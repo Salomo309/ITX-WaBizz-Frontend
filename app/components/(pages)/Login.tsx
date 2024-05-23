@@ -13,9 +13,8 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import auth from "@react-native-firebase/auth";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import ApiUrl from "./../../constants/api";
 import messaging from "@react-native-firebase/messaging";
-import { WEB_CLIENT_ID } from '@env';
+import { WEB_CLIENT_ID, API_URL } from '@env';
 
 GoogleSignin.configure({
     webClientId:
@@ -109,7 +108,7 @@ const LoginPage = () => {
 
     const login = async (email: string, deviceToken: string) => {
         try {
-            const response = await fetch(ApiUrl.concat("/login"), {
+            const response = await fetch(API_URL.concat("/login"), {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

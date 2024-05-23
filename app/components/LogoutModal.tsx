@@ -3,7 +3,7 @@ import { Text, View, TouchableOpacity, Alert, StyleSheet } from "react-native";
 import Modal from "react-native-modal";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import auth from "@react-native-firebase/auth";
-import ApiUrl from "./../constants/api";
+import { API_URL } from "@env";
 
 type ModalProps = {
     isVisible: boolean;
@@ -19,7 +19,7 @@ const LogoutModal = ({ isVisible, onClose }: ModalProps) => {
             }
 
             const parsedEmail = JSON.parse(userEmail);
-            const response = await fetch(ApiUrl.concat("/logout"), {
+            const response = await fetch(API_URL.concat("/logout"), {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

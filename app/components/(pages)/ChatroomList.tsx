@@ -11,7 +11,7 @@ import {
 import Colors from "./../../constants/colors";
 import Header from "./../Header";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import ApiUrl from "./../../constants/api";
+import { API_URL } from "@env";
 import { useNavigation } from "@react-navigation/native";
 import { TouchableHighlight } from "react-native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -186,7 +186,7 @@ const ChatroomList = () => {
                     throw new Error("Email not found in storage");
                 }
                 const parsedEmail = JSON.parse(userEmail);
-                const response = await fetch(ApiUrl.concat("/chatlist"), {
+                const response = await fetch(API_URL.concat("/chatlist"), {
                     method: "get",
                     headers: {
                         "Content-Type": "application/json",

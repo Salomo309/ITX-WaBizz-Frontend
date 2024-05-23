@@ -18,7 +18,7 @@ import Popover from "react-native-popover-view";
 import LogoutModal from "./LogoutModal";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import auth from "@react-native-firebase/auth";
-import ApiUrl from "./../constants/api";
+import { API_URL } from "@env";
 import { ChatroomPreviewProps } from "./(pages)/ChatroomList";
 import { RootStackParamList } from "App";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -80,7 +80,7 @@ const Header: React.FC<HeaderProps> = ({
                 throw new Error("Email not found in storage");
             }
             const parsedEmail = JSON.parse(email);
-            const response = await fetch(`${ApiUrl}/chatlist`, {
+            const response = await fetch(`${API_URL}/chatlist`, {
                 headers: {
                     Authorization: `Bearer ${parsedEmail}`,
                     "Content-Type": "application/json",
@@ -137,7 +137,7 @@ const Header: React.FC<HeaderProps> = ({
                     throw new Error("Email not found in storage");
                 }
                 const parsedEmail = JSON.parse(email);
-                const response = await fetch(`${ApiUrl}/chatlist`, {
+                const response = await fetch(`${API_URL}/chatlist`, {
                     headers: {
                         Authorization: `Bearer ${parsedEmail}`,
                         "Content-Type": "application/json",
@@ -174,7 +174,7 @@ const Header: React.FC<HeaderProps> = ({
                 }
                 const parsedEmail = JSON.parse(email);
                 const contactResponse = await fetch(
-                    `${ApiUrl}/chatlist/search/contact?keyword=${text}`,
+                    `${API_URL}/chatlist/search/contact?keyword=${text}`,
                     {
                         headers: {
                             Authorization: `Bearer ${parsedEmail}`,
@@ -215,7 +215,7 @@ const Header: React.FC<HeaderProps> = ({
                 }
                 const parsedEmail = JSON.parse(email);
                 const messageResponse = await fetch(
-                    `${ApiUrl}/chatlist/search/message?keyword=${text}`,
+                    `${API_URL}/chatlist/search/message?keyword=${text}`,
                     {
                         headers: {
                             Authorization: `Bearer ${parsedEmail}`,

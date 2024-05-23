@@ -4,7 +4,7 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import { format } from "date-fns";
 import DocumentPicker, { types } from 'react-native-document-picker';
 import Colors from "./../constants/colors";
-import ApiUrl from "./../constants/api";
+import { API_URL } from "@env";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 interface TypeBarProps {
@@ -44,7 +44,7 @@ const TypeBar: React.FC<TypeBarProps> = ({ chatId, email, chatroomId }) => {
 
     const parsedEmail = JSON.parse(userEmail);
 
-      const response = await fetch(ApiUrl.concat("/chatroom/send"),
+      const response = await fetch(API_URL.concat("/chatroom/send"),
         {
           method: "POST",
           body: formData,

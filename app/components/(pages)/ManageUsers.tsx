@@ -13,7 +13,7 @@ import {
 } from "react-native";
 import HeaderManageUsers from "../HeaderManageUsers";
 import Colors from "./../../constants/colors";
-import ApiUrl from "./../../constants/api";
+import { API_URL } from "@env";
 import { RouteProp, useRoute } from "@react-navigation/native";
 import { RootStackParamList } from "App";
 import { useState, useEffect } from "react";
@@ -40,11 +40,11 @@ const User: React.FC<Users> = ({ name, email, isActive }) => {
                 }
 
                 const parsedEmail = JSON.parse(userEmail);
-                const apiUrl = isActiveToggle
+                const API_URL = isActiveToggle
                     ? "/user/active"
                     : "/user/inactive";
                 const response = await fetch(
-                    ApiUrl.concat(apiUrl + "?email=" + email),
+                    API_URL.concat(API_URL + "?email=" + email),
                     {
                         method: "get",
                         headers: {
@@ -120,7 +120,7 @@ const ManageUsers = () => {
               }
 
               const parsedEmail = JSON.parse(userEmail);
-                const response = await fetch(ApiUrl.concat("/user/all"), {
+                const response = await fetch(API_URL.concat("/user/all"), {
                     method: "get",
                     headers: {
                         "Content-Type": "application/json",
@@ -167,7 +167,7 @@ const ManageUsers = () => {
               }
 
               const parsedEmail = JSON.parse(userEmail);
-                const response = await fetch(ApiUrl.concat("/user/insert"), {
+                const response = await fetch(API_URL.concat("/user/insert"), {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",

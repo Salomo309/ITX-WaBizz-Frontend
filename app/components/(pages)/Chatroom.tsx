@@ -5,7 +5,7 @@ import HeaderChat from "./../HeaderChat";
 import AdminChat from "./../AdminChat";
 import CustomerChat from "./../CustomerChat";
 import DayHolder from "./../DayHolder";
-import ApiUrl from "./../../constants/api";
+import { API_URL } from "@env";
 import { RouteProp } from "@react-navigation/native";
 import { RootStackParamList } from "App";
 import { useRoute } from "@react-navigation/native";
@@ -154,7 +154,7 @@ const Chatroom = () => {
 
           const parsedEmail = JSON.parse(userEmail);
             const response = await fetch(
-                ApiUrl.concat("/chatroom?chatroomID=" + chatId),
+                API_URL.concat("/chatroom?chatroomID=" + chatId),
                 {
                     method: "get",
                     headers: {
