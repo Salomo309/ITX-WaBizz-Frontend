@@ -64,6 +64,7 @@ const LoginPage = () => {
             await GoogleSignin.hasPlayServices({
                 showPlayServicesUpdateDialog: true,
             });
+            await GoogleSignin.signOut();
             const { idToken, user } = await GoogleSignin.signIn();
 
             if (idToken) {
