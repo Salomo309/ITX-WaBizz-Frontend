@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { View, TextInput, TouchableOpacity } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { format } from "date-fns";
-import DocumentPicker, { types } from 'react-native-document-picker';
+import DocumentPicker from 'react-native-document-picker';
 import Colors from "./../constants/colors";
 import { API_URL } from "@env";
 import AsyncStorage from "@react-native-async-storage/async-storage";

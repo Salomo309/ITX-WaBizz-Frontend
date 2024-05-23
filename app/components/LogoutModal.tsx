@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
         backgroundColor: "white",
         padding: 20,
         borderRadius: 10,
-        width: "80%", // Set this to whatever width you like
+        width: "80%",
         alignItems: "center",
     },
     modalTitle: {
@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
         borderWidth: 2,
         padding: 10,
         borderRadius: 4,
-        marginRight: 8, // Adjust as needed for your spacing
+        marginRight: 8,
     },
     cancelButtonText: {
         fontSize: 16,

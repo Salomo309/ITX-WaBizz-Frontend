@@ -1,11 +1,10 @@
 import Colors from "./../constants/colors";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import {
     View,
     Image,
     Text,
 } from "react-native";
-// import RNFS from 'react-native-fs';
 
 interface PhotoComponentProps {
     key: number;
@@ -21,34 +20,6 @@ const formatTimeBubbleChat = (timestamp: string | number) => {
 };
 
 const PhotoComponent: React.FC<PhotoComponentProps> = ({ fileUrl, time, statusRead, from }) => {
-//     const [imageData, setImageData] = useState<string | null>(null);
-
-//   useEffect(() => {
-//     const loadImage = async () => {
-//       try {
-//         const base64Data = await RNFS.readFile(fileUrl, 'base64');
-//         setImageData(`data:image/jpeg;base64,${base64Data}`);
-//       } catch (error) {
-//         console.error("Error loading image:", error);
-//       }
-//     };
-
-//     loadImage();
-//   }, [fileUrl]);
-    // const [imageUri, setImageUri] = useState<string | null>(null);
-
-    // useEffect(() => {
-    // // Create a blob from the binary data
-    // const blob = new Blob([fileUrl], { type: "image/jpeg" }); // Adjust type as needed
-
-    // // Create a URL for the blob
-    // const uri = URL.createObjectURL(blob);
-    // setImageUri(uri);
-
-    // // Cleanup function to revoke the URL when component unmounts
-    // return () => URL.revokeObjectURL(uri);
-    // }, [fileUrl]);
-
     return (
         (from=="admin") ?
             <View
@@ -57,9 +28,7 @@ const PhotoComponent: React.FC<PhotoComponentProps> = ({ fileUrl, time, statusRe
             >
                 <View className="relative">
                     <Image
-                        // source={{ uri: fileUrl }}
                         source={{ uri: `data:image/jpeg;base64,${fileUrl}` }}
-                        // source={{ uri: imageData }}
                         style={{ width: '100%', height: undefined, aspectRatio: 1 }}
                     />
                     <Text

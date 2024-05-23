@@ -1,5 +1,5 @@
 import Colors from "./../constants/colors";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import {
     View,
     Image,
@@ -36,10 +36,10 @@ const VideoComponent: React.FC<VideoComponentProps> = ({ fileUrl, time, statusRe
                             position: 'absolute',
                             left: '50%',
                             top: '50%',
-                            transform: [{ translateX: -25 }, { translateY: -25 }], // Center the container
-                            backgroundColor: 'black', // Black background
-                            opacity: 0.75, // 75% opacity
-                            borderRadius: 50, // Rounded corners, half the size of the icon
+                            transform: [{ translateX: -25 }, { translateY: -25 }],
+                            backgroundColor: 'black',
+                            opacity: 0.75,
+                            borderRadius: 50,
                             width: 50,
                             height: 50,
                             justifyContent: 'center',
@@ -107,10 +107,10 @@ const VideoComponent: React.FC<VideoComponentProps> = ({ fileUrl, time, statusRe
                             position: 'absolute',
                             left: '50%',
                             top: '50%',
-                            transform: [{ translateX: -25 }, { translateY: -25 }], // Center the container
-                            backgroundColor: 'black', // Black background
-                            opacity: 0.75, // 75% opacity
-                            borderRadius: 50, // Rounded corners, half the size of the icon
+                            transform: [{ translateX: -25 }, { translateY: -25 }],
+                            backgroundColor: 'black',
+                            opacity: 0.75,
+                            borderRadius: 50,
                             width: 50,
                             height: 50,
                             justifyContent: 'center',

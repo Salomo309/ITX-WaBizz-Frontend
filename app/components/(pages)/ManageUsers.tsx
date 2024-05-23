@@ -1,13 +1,11 @@
 import {
     Text,
     TextInput,
-    Button,
     View,
     StyleSheet,
     ScrollView,
     SafeAreaView,
     StatusBar,
-    Image,
     Switch,
     TouchableOpacity,
 } from "react-native";
@@ -104,12 +102,7 @@ const User: React.FC<Users> = ({ name, email, isActive }) => {
 
 const ManageUsers = () => {
     const route = useRoute<ManageUsersScreenRouteProp>();
-    const [users, setUsers] = useState<Users[]>([
-        // { name: 'Dillon Audris', email: 'godillon@example.com', isActive: true },
-        // { name: 'Austin Pardosi', email: 'austinpardosi@example.com', isActive: false },
-        // { name: 'Manuella Sianipar', email: 'manuella@example.com', isActive: true },
-        // { name: 'Salomo Manalu', email: 'salmanalu@example.com', isActive: false },
-    ]);
+    const [users, setUsers] = useState<Users[]>([]);
 
     useEffect(() => {
         const fecthUsers = async () => {
@@ -300,8 +293,8 @@ const styles = StyleSheet.create({
     titleText: {
         fontFamily: "Roboto",
         fontWeight: "bold",
-        color: "#5F6368", // Custom gray color
-        fontSize: 16, // Base font size
+        color: "#5F6368",
+        fontSize: 16,
         textAlign: "left",
         paddingLeft: 40,
         paddingRight: 40,
@@ -350,7 +343,6 @@ const styles = StyleSheet.create({
     buttonText: {
         color: "white",
         fontSize: 30,
-        // fontWeight: "bold",
     },
     addUserButtonText: {
         color: "white",

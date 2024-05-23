@@ -4,12 +4,8 @@ import {
     StyleSheet,
     Text,
     TouchableOpacity,
-    Image,
-    Button,
-    Modal,
     TextInput,
     Alert,
-    TouchableHighlight,
 } from "react-native";
 import { RouteProp, useNavigation } from "@react-navigation/native";
 import Ionicons from "react-native-vector-icons/Ionicons";

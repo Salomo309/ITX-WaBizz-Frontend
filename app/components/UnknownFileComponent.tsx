@@ -1,5 +1,5 @@
 import Colors from "./../constants/colors";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import {
     View,
     Image,

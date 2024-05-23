@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Image, Text } from "react-native";
+import { View, Text } from "react-native";
 import Colors from "./../constants/colors";
 
 interface CustomerChatProps{

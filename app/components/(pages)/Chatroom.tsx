@@ -226,7 +226,6 @@ const Chatroom = () => {
     useEffect(() => {
         messaging().setBackgroundMessageHandler(async (remoteMessage) => {
             console.log("Message handled in the background!", remoteMessage);
-            // Fetch chats data and update state
             await fetchChats();
         });
     }, []);
@@ -283,7 +282,6 @@ const Chatroom = () => {
                 highlightedContent = chat.content;
             }
 
-            // Check message type, if it is a file, then render the view depends on the file type
             if (chat.messageType === "photo") {
                 renderedComponents.push(
                     <PhotoComponent
@@ -347,8 +345,8 @@ const Chatroom = () => {
                 userName={name}
                 searchText={searchText}
                 setSearchText={setSearchText}
-                highlightedIndex={highlightedIndex} // Make sure to pass this prop
-                setHighlightedIndex={setHighlightedIndex} // Make sure to pass this prop
+                highlightedIndex={highlightedIndex}
+                setHighlightedIndex={setHighlightedIndex}
                 chats={chats}
             />
             <ScrollView style={{ backgroundColor: Colors.backgroundChat }}>
