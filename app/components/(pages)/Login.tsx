@@ -1,5 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Text, TouchableOpacity, View, Image, StatusBar } from "react-native";
+import {
+    Text,
+    TouchableOpacity,
+    View,
+    Image,
+    StatusBar,
+    Alert,
+} from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { RootStackParamList } from "./../../../App";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -82,6 +89,10 @@ const LoginPage = () => {
                     console.log("User signed in successfully");
                     navigation.navigate("ChatroomList");
                 } else {
+                    Alert.alert(
+                        "Error",
+                        "Email anda tidak terdaftar atau sedang tidak aktif, silahkan kontak admin untuk login"
+                    );
                     console.log("Login failed:", loginResponse?.Message);
                 }
             }
@@ -97,7 +108,10 @@ const LoginPage = () => {
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ Email: email, DeviceToken: deviceToken }),
+                body: JSON.stringify({
+                    Email: email,
+                    DeviceToken: deviceToken,
+                }),
             });
             console.log("AAA" + deviceToken);
 
