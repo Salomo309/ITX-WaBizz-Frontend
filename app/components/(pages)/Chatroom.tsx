@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Text, View, ScrollView, SafeAreaView, StatusBar } from "react-native";
+import { Text, View, ScrollView, SafeAreaView, StatusBar, ActivityIndicator } from "react-native";
 import Colors from "./../../constants/colors";
 import HeaderChat from "./../HeaderChat";
 import AdminChat from "./../AdminChat";
@@ -140,12 +140,13 @@ const Chatroom = () => {
     const [chats, setChats] = useState([]);
     const [email, setEmail] = useState("");
     const [chatroomID, setChatroomID] = useState<number>(0);
-    const [lastDayHolderDate, setLastDayHolderDate] = useState("");
     const [searchText, setSearchText] = useState("");
     const [highlightedIndex, setHighlightedIndex] = useState<number>(-1);
+    const [loading, setLoading] = useState<boolean>(false);
 
     const fetchChats = async () => {
         try {
+            setLoading(true);
             const userEmail = await AsyncStorage.getItem("Email");
             if (!userEmail) {
               throw new Error("Email not found in storage");
@@ -196,6 +197,8 @@ const Chatroom = () => {
             setChatroomID(chatsData[0].ChatroomID);
         } catch (error) {
             console.error("Error fetching chats: ", error);
+        } finally {
+          setLoading(false);
         }
     };
     useEffect(() => {
@@ -227,36 +230,6 @@ const Chatroom = () => {
             await fetchChats();
         });
     }, []);
-
-    const checkFileType = (fileUrl: string) => {
-        // Regex pattern to match the file extension after the last dot
-        const extensionRegex = /\.([0-9a-z]+)(?:[\?#]|$)/i;
-
-        // Extract the file extension from the URL
-        const match = fileUrl.match(extensionRegex);
-        if (match) {
-            const extension = match[1].toLowerCase();
-
-            // Check if the extension corresponds to a photo or a video
-            if (
-                extension === "jpg" ||
-                extension === "jpeg" ||
-                extension === "png"
-            ) {
-                return "photo";
-            } else if (
-                extension === "mp4" ||
-                extension === "mov" ||
-                extension === "avi"
-            ) {
-                return "video";
-            } else {
-                return "unknown"; // If extension is neither photo nor video
-            }
-        } else {
-            return "unknown"; // If no extension found
-        }
-    };
 
     const renderChatMessagesByDay = (chatData: ChatPreviewProps[]) => {
         let renderedComponents: JSX.Element[] = [];
@@ -311,7 +284,6 @@ const Chatroom = () => {
             }
 
             // Check message type, if it is a file, then render the view depends on the file type
-            // let content: React.ReactNode;
             if (chat.messageType === "photo") {
                 renderedComponents.push(
                     <PhotoComponent
@@ -343,26 +315,6 @@ const Chatroom = () => {
                     ></UnknownFileComponent>
                 );
             } else {
-                // if (chat.messageType === "file") {
-                //   const fileType = checkFileType(chat.content);
-                //   // Render different UI based on the file type
-                //   if (fileType === "photo") {
-                //     content = (
-                //       <PhotoComponent key={chat.id} fileUrl={chat.content} time={chat.timendate} statusRead={chat.statusRead} from={(chat.isRead==null) ? "admin" : "customer"} />
-                //     );
-                //   } else if (fileType === "video") {
-                //     content = (
-                //       <VideoComponent key={chat.id} fileUrl={chat.content} time={chat.timendate} statusRead={chat.statusRead} from={(chat.isRead==null) ? "admin" : "customer"}/>
-                //     );
-                //   } else {
-                //     content = (
-                //       <UnknownFileComponent key={chat.id} fileUrl={chat.content} />
-                //     )
-                //   }
-                // } else {
-                //   content = chat.content;
-                // }
-
                 if (chat.isRead == null) {
                     renderedComponents.push(
                         <AdminChat
@@ -400,16 +352,11 @@ const Chatroom = () => {
                 chats={chats}
             />
             <ScrollView style={{ backgroundColor: Colors.backgroundChat }}>
-                {/**dummy data */}
-                {/* {renderChatMessagesByDay(dummyChats)} */}
-                {/* {dummyChats.length > 0 && renderChatMessagesByDay(dummyChats)} */}
-                {dummyChats.length > 0 && renderChatMessagesByDay(chats)}
-                {/* <UnknownFileComponent 
-          key={-1} 
-          fileUrl="https://www.zenius.net/blog/wp-content/uploads/2015/07/stei-itb.jpg" 
-          time={"2024-05-05 19:00:00"} 
-          statusRead="read"
-          from={"customer"}></UnknownFileComponent> */}
+                {loading ? (
+                  <ActivityIndicator size="large" color={Colors.primary1} style={{ justifyContent: 'center', alignItems: 'center' }} />
+                ) : (
+                  renderChatMessagesByDay(chats)
+                )}
             </ScrollView>
             <View
                 className="p-[20]"
