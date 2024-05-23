@@ -60,7 +60,7 @@ const PhotoComponent: React.FC<PhotoComponentProps> = ({ fileUrl, time, statusRe
                         // source={{ uri: fileUrl }}
                         source={{ uri: `data:image/jpeg;base64,${fileUrl}` }}
                         // source={{ uri: imageData }}
-                        style={{ width: 250, height: 250 }}
+                        style={{ width: '100%', height: undefined, aspectRatio: 1 }}
                     />
                     <Text
                         className="p-1 text-s font-[Roboto] text-white text-right mr-2"
@@ -112,7 +112,7 @@ const PhotoComponent: React.FC<PhotoComponentProps> = ({ fileUrl, time, statusRe
                 <View className="relative">
                     <Image
                         source={{ uri: fileUrl }}
-                        style={{ width: 250, height: 250 }}
+                        style={{ width: '100%', height: undefined, aspectRatio: 1 }}
                     />
                     <Text
                         className="p-1 text-s font-[Roboto] text-white text-right mr-2"
