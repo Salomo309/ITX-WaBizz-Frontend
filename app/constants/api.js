@@ -1,3 +1,3 @@
-const ApiUrl = "https://golden-worthy-basilisk.ngrok-free.app/api";
+const ApiUrl = "https://759c-36-79-195-3.ngrok-free.app/";
 
 export default ApiUrl;

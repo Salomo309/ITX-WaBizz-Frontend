@@ -75,13 +75,17 @@ const LoginPage = () => {
                         "IsAdmin",
                         JSON.stringify(loginResponse.IsAdmin)
                     );
+                    await AsyncStorage.setItem(
+                        "Email",
+                        JSON.stringify(user.email)
+                    );
                     console.log("IsAdmin:", loginResponse.IsAdmin);
 
                     const googleCredential =
                         auth.GoogleAuthProvider.credential(idToken);
                     await auth().signInWithCredential(googleCredential);
 
-                    AsyncStorage.setItem("@user_token", idToken);
+                    AsyncStorage.setItem("UserToken", idToken);
                     AsyncStorage.setItem(
                         "@last_login",
                         JSON.stringify(new Date())

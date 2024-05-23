@@ -174,7 +174,6 @@ const ChatroomList = () => {
       try {
         // const response = await fetch("http://10.0.2.2:8080/api/chatlist", {
         const response = await fetch(ApiUrl.concat("/chatlist"), {
-          // const response = await fetch("https://d0ea-36-79-175-119.ngrok-free.app/api/chatlist", {
           method: "get",
           headers: {
             "Content-Type": "application/json",

@@ -4,6 +4,7 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import { format } from "date-fns";
 import DocumentPicker, { types } from 'react-native-document-picker';
 import Colors from "./../constants/colors";
+import ApiUrl from "./../constants/api";
 
 interface TypeBarProps {
   chatId: number;
@@ -35,13 +36,13 @@ const TypeBar: React.FC<TypeBarProps> = ({ chatId, email, chatroomId }) => {
         formData.append('file', file);
       }
   
-      const response = await fetch(
-        "https://golden-worthy-basilisk.ngrok-free.app/api/chatroom/send",
+      const response = await fetch(ApiUrl.concat("/chatroom/send"),
         {
           method: "POST",
           body: formData,
         }
       );
+      
   
       const responseData = await response.json();
       console.log("Message sent:", responseData);
