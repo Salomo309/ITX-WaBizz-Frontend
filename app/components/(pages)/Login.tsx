@@ -97,8 +97,9 @@ const LoginPage = () => {
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ email, device_token: deviceToken }),
+                body: JSON.stringify({ Email: email, DeviceToken: deviceToken }),
             });
+            console.log("AAA" + deviceToken);
 
             const data = await response.json();
             console.log("Login response:", data);
