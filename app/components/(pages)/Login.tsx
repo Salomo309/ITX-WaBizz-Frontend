@@ -15,10 +15,11 @@ import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import ApiUrl from "./../../constants/api";
 import messaging from "@react-native-firebase/messaging";
+import { WEB_CLIENT_ID } from '@env';
 
 GoogleSignin.configure({
     webClientId:
-        "224642285117-73ks59ifskuckg0qa1hre3s5fo6cisnf.apps.googleusercontent.com",
+        WEB_CLIENT_ID,
 });
 
 type loginScreenProp = NativeStackNavigationProp<RootStackParamList, "Login">;

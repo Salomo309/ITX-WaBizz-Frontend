@@ -27,6 +27,7 @@
     "react": "18.2.0",
     "react-native": "^0.73.6",
     "react-native-document-picker": "^9.2.0",
+    "react-native-dotenv": "^3.4.11",
     "react-native-modal": "^13.0.1",
     "react-native-popover-view": "^5.1.8",
     "react-native-push-notification": "^8.1.1",
