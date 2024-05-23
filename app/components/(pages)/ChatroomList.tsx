@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
     Text,
     View,
@@ -12,7 +12,7 @@ import Colors from "./../../constants/colors";
 import Header from "./../Header";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { API_URL } from "@env";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import { TouchableHighlight } from "react-native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "App";
@@ -174,61 +174,64 @@ const formatTime = (timestamp: string | number) => {
 const ChatroomList = () => {
     const navigation = useNavigation<ChatroomListNavigationProp>();
     const [chatrooms, setChatrooms] = useState<ChatroomPreviewProps[]>([]);
-    const [chatroomsByMessage, setChatroomsByMessage] = useState<
-        ChatroomPreviewProps[]
-    >([]);
+    const prevChatroomsRef = useRef<ChatroomPreviewProps[]>([]);
+    const [chatroomsByMessage, setChatroomsByMessage] = useState<ChatroomPreviewProps[]>([]);
 
-    useEffect(() => {
-        const fetchChatrooms = async () => {
-            try {
-                const userEmail = await AsyncStorage.getItem("Email");
-                if (!userEmail) {
-                    throw new Error("Email not found in storage");
-                }
-                const parsedEmail = JSON.parse(userEmail);
-                const response = await fetch(API_URL.concat("/chatlist"), {
-                    method: "get",
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: `Bearer ${parsedEmail}`,
-                    },
-                });
-                // console.log("response", response);
-
-                if (!response.ok) {
-                    throw new Error("Network response was not ok");
-                }
-
-                const data = await response.json();
-                console.log("Chatroom data: ", data);
-
-                const chatList = data.ChatList;
-
-                const chatroomsWithId = chatList.map(
-                    (chatroom: any, index: number) => ({
-                        id: index + 1,
-                        profilePic: "",
-                        name: chatroom.customerName,
-                        messagePreview: chatroom.content,
-                        messageType: chatroom.messageType,
-                        time: chatroom.timendate,
-                        isRead: chatroom.isRead || false,
-                        statusRead: chatroom.statusRead,
-                        countUnread: chatroom.countUnread,
-                    })
-                );
-
-                setChatrooms(chatroomsWithId);
-            } catch (error) {
-                const userEmail = await AsyncStorage.getItem("Email");
-                console.error("EMAIL", userEmail);
-                console.error("Error fetching chatrooms: ", error);
-                console.error("EMAIL", userEmail);
+    const fetchChatrooms = async () => {
+        try {
+            const userEmail = await AsyncStorage.getItem("Email");
+            if (!userEmail) {
+                throw new Error("Email not found in storage");
             }
-        };
+            const parsedEmail = JSON.parse(userEmail);
+            const response = await fetch(API_URL.concat("/chatlist"), {
+                method: "get",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${parsedEmail}`,
+                },
+            });
 
-        fetchChatrooms();
-    }, [chatrooms]);
+            if (!response.ok) {
+                throw new Error("Network response was not ok");
+            }
+
+            const data = await response.json();
+            console.log("Chatroom data: ", data);
+
+            const chatList = data.ChatList;
+
+            const chatroomsWithId = chatList.map((chatroom: any, index: number) => ({
+                id: index + 1,
+                profilePic: "",
+                name: chatroom.customerName,
+                messagePreview: chatroom.content,
+                messageType: chatroom.messageType,
+                time: chatroom.timendate,
+                isRead: chatroom.isRead || false,
+                statusRead: chatroom.statusRead,
+                countUnread: chatroom.countUnread,
+            }));
+
+            if (JSON.stringify(chatroomsWithId) !== JSON.stringify(prevChatroomsRef.current)) {
+                console.log("Updating chatrooms state...");
+                setChatrooms(chatroomsWithId);
+                prevChatroomsRef.current = chatroomsWithId;
+            }
+        } catch (error) {
+            const userEmail = await AsyncStorage.getItem("Email");
+            console.error("EMAIL", userEmail);
+            console.error("Error fetching chatrooms: ", error);
+            console.error("EMAIL", userEmail);
+        }
+    };
+
+    useFocusEffect(
+        React.useCallback(() => {
+            fetchChatrooms();
+        }, [])
+    );
+    
     return (
         <SafeAreaView className="flex-1 bg-white">
             <StatusBar backgroundColor={Colors.primary1} />
@@ -239,24 +242,6 @@ const ChatroomList = () => {
             />
             <ScrollView>
                 <View className="flex-1 items-start p-[24]">
-                    {/* <TouchableHighlight
-            underlayColor="#DDDDDD"
-            activeOpacity={0.6}
-            onPress={() =>
-            navigation.navigate('Chatroom', {chatId: 0, name: "+62 80000000000", profilePic: ""})}>
-            <ChatroomPreview
-              id={0}
-              profilePic={""}
-              name={"+62 80000000000"}
-              messagePreview={"oke kak"}
-              messageType={"text"}
-              time={"2024-04-02 03:14"}
-              isRead={"True"}
-              statusRead={"read"}
-              countUnread={"0"}
-            />
-        </TouchableHighlight> */}
-
                     {chatrooms &&
                         chatrooms.map((chatroom: ChatroomPreviewProps) => (
                             <TouchableHighlight
@@ -283,19 +268,6 @@ const ChatroomList = () => {
                                             ? "video"
                                             : "file"
                                     }
-                                    // messagePreview={() => {
-                                    //   switch (chatroom.messageType) {
-                                    //     case "text":
-                                    //       return chatroom.messagePreview;
-                                    //     case "photo":
-                                    //       return "photo";
-                                    //     case "video":
-                                    //       return "video";
-                                    //     default:
-                                    //       return "";
-                                    //   }
-                                    // }}
-
                                     messageType={chatroom.messageType}
                                     time={chatroom.time}
                                     isRead={chatroom.isRead}
@@ -304,60 +276,43 @@ const ChatroomList = () => {
                                 />
                             </TouchableHighlight>
                         ))}
-
                     {chatroomsByMessage.length > 0 && (
                         <>
                             <Text style={styles.messagesText}>Messages</Text>
-                            {chatroomsByMessage.map(
-                                (chatroom: ChatroomPreviewProps) => (
-                                    <TouchableHighlight
-                                        key={chatroom.id}
-                                        underlayColor="#DDDDDD"
-                                        activeOpacity={0.6}
-                                        onPress={() =>
-                                            navigation.navigate("Chatroom", {
-                                                chatId: chatroom.id,
-                                                name: chatroom.name,
-                                                profilePic: chatroom.profilePic,
-                                            })
+                            {chatroomsByMessage.map((chatroom: ChatroomPreviewProps) => (
+                                <TouchableHighlight
+                                    key={chatroom.id}
+                                    underlayColor="#DDDDDD"
+                                    activeOpacity={0.6}
+                                    onPress={() =>
+                                        navigation.navigate("Chatroom", {
+                                            chatId: chatroom.id,
+                                            name: chatroom.name,
+                                            profilePic: chatroom.profilePic,
+                                        })
+                                    }
+                                >
+                                    <ChatroomPreview
+                                        id={chatroom.id}
+                                        profilePic={chatroom.profilePic}
+                                        name={chatroom.name}
+                                        messagePreview={
+                                            chatroom.messageType == "text"
+                                                ? chatroom.messagePreview
+                                                : chatroom.messageType == "photo"
+                                                ? "photo"
+                                                : chatroom.messageType == "video"
+                                                ? "video"
+                                                : "file"
                                         }
-                                    >
-                                        <ChatroomPreview
-                                            id={chatroom.id}
-                                            profilePic={chatroom.profilePic}
-                                            name={chatroom.name}
-                                            messagePreview={
-                                                chatroom.messageType == "text"
-                                                    ? chatroom.messagePreview
-                                                    : chatroom.messageType ==
-                                                      "photo"
-                                                    ? "photo"
-                                                    : chatroom.messageType ==
-                                                      "video"
-                                                    ? "video"
-                                                    : "file"
-                                            }
-                                            // messagePreview={() => {
-                                            //   switch (chatroom.messageType) {
-                                            //     case "text":
-                                            //       return chatroom.messagePreview;
-                                            //     case "photo":
-                                            //       return "photo";
-                                            //     case "video":
-                                            //       return "video";
-                                            //     default:
-                                            //       return "";
-                                            //   }
-                                            // }}
-                                            messageType={chatroom.messageType}
-                                            time={chatroom.time}
-                                            isRead={chatroom.isRead}
-                                            statusRead={chatroom.statusRead}
-                                            countUnread={chatroom.countUnread}
-                                        />
-                                    </TouchableHighlight>
-                                )
-                            )}
+                                        messageType={chatroom.messageType}
+                                        time={chatroom.time}
+                                        isRead={chatroom.isRead}
+                                        statusRead={chatroom.statusRead}
+                                        countUnread={chatroom.countUnread}
+                                    />
+                                </TouchableHighlight>
+                            ))}
                         </>
                     )}
                 </View>
