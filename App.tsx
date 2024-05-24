@@ -9,70 +9,72 @@ import Chatroom from "./app/components/(pages)/Chatroom";
 import ManageUsers from "./app/components/(pages)/ManageUsers";
 
 export type RootStackParamList = {
-  ChatroomList: undefined;
-  Login: undefined;
-  Chatroom: { chatId: number, name: string, profilePic: string };
-  ManageUsers: undefined;
+    ChatroomList: undefined;
+    Login: undefined;
+    Chatroom: { chatId: number; name: string; profilePic: string };
+    ManageUsers: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function App() {
-  const [isLoggedIn, setLoggedIn] = useState(false);
+    const [isLoggedIn, setLoggedIn] = useState(false);
 
-  const checkLoginStatus = async () => {
-    const lastLoginString = await AsyncStorage.getItem("@last_login");
-    if (lastLoginString) {
-      const lastLogin = new Date(JSON.parse(lastLoginString));
-      const now = new Date();
-      const diff = now.getTime() - lastLogin.getTime();
-      const hoursDiff = diff / (1000 * 60 * 60);
-      if (hoursDiff > 24) {
-        setLoggedIn(false);
-        auth().signOut();
-      }
-    }
+    const checkLoginStatus = async () => {
+        const lastLoginString = await AsyncStorage.getItem("LastLogin");
+        if (lastLoginString) {
+            const lastLogin = new Date(JSON.parse(lastLoginString));
+            const now = new Date();
+            const diff = now.getTime() - lastLogin.getTime();
+            const hoursDiff = diff / (1000 * 60 * 60);
+            if (hoursDiff > 24) {
+                setLoggedIn(false);
+                auth().signOut();
+            }
+        }
 
-    auth().onAuthStateChanged((user) => {
-      const userIsLoggedIn = !!user;
-      setLoggedIn(userIsLoggedIn);
-      if (userIsLoggedIn) {
-        AsyncStorage.setItem("@last_login", JSON.stringify(new Date()));
-      }
-    });
-  };
+        auth().onAuthStateChanged((user) => {
+            const userIsLoggedIn = !!user;
+            setLoggedIn(userIsLoggedIn);
+            if (userIsLoggedIn) {
+                AsyncStorage.setItem("LastLogin", JSON.stringify(new Date()));
+            }
+        });
+    };
 
-  useEffect(() => {
-    checkLoginStatus();
-  }, []);
+    useEffect(() => {
+        checkLoginStatus();
+    }, []);
 
-  return (
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName="Login">
-        {isLoggedIn ? (
-          <>
-          <Stack.Screen
-            name="ChatroomList"
-            component={ChatroomList}
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name="Chatroom"
-            component={Chatroom}
-            options={{ headerShown: false }} />
-          <Stack.Screen
-            name="ManageUsers"
-            component={ManageUsers}
-            options={{ headerShown: false }} />
-          </>
-        ) : (
-          <Stack.Screen
-            name="Login"
-            component={LoginPage}
-            options={{ headerShown: false }}
-          />
-        )}
-      </Stack.Navigator>
-    </NavigationContainer>
-  );
+    return (
+        <NavigationContainer>
+            <Stack.Navigator initialRouteName="Login">
+                {isLoggedIn ? (
+                    <>
+                        <Stack.Screen
+                            name="ChatroomList"
+                            component={ChatroomList}
+                            options={{ headerShown: false }}
+                        />
+                        <Stack.Screen
+                            name="Chatroom"
+                            component={Chatroom}
+                            options={{ headerShown: false }}
+                        />
+                        <Stack.Screen
+                            name="ManageUsers"
+                            component={ManageUsers}
+                            options={{ headerShown: false }}
+                        />
+                    </>
+                ) : (
+                    <Stack.Screen
+                        name="Login"
+                        component={LoginPage}
+                        options={{ headerShown: false }}
+                    />
+                )}
+            </Stack.Navigator>
+        </NavigationContainer>
+    );
 }

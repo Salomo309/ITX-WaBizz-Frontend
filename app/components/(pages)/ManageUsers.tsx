@@ -1,29 +1,29 @@
 import {
-  Text,
-  TextInput,
-  Button,
-  View,
-  StyleSheet,
-  ScrollView,
-  SafeAreaView,
-  StatusBar,
-  Image,
-  Switch,
-  TouchableOpacity,
+    Text,
+    TextInput,
+    View,
+    StyleSheet,
+    ScrollView,
+    SafeAreaView,
+    StatusBar,
+    Switch,
+    TouchableOpacity,
 } from "react-native";
 import HeaderManageUsers from "../HeaderManageUsers";
 import Colors from "./../../constants/colors";
-import ApiUrl from "./../../constants/api";
+import { API_URL } from "@env";
 import { RouteProp, useRoute } from "@react-navigation/native";
 import { RootStackParamList } from "App";
 import { useState, useEffect } from "react";
+import Ionicons from "react-native-vector-icons/Ionicons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-type ManageUsersScreenRouteProp = RouteProp<RootStackParamList, 'ManageUsers'>;
+type ManageUsersScreenRouteProp = RouteProp<RootStackParamList, "ManageUsers">;
 
 export interface Users {
-  name: string;
-  email: string;
-  isActive: boolean;
+    name: string;
+    email: string;
+    isActive: boolean;
 }
 
 const User: React.FC<Users> = ({ name, email, isActive }) => {
@@ -32,13 +32,25 @@ const User: React.FC<Users> = ({ name, email, isActive }) => {
     useEffect(() => {
         const fetchActivation = async () => {
             try {
-                const apiUrl = isActiveToggle ? '/user/active' : '/user/inactive';
-                const response = await fetch(ApiUrl.concat(apiUrl + "?email=" + email), {
-                    method: "get",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                });
+                const userEmail = await AsyncStorage.getItem("Email");
+                if (!userEmail) {
+                    throw new Error("Email not found in storage");
+                }
+
+                const parsedEmail = JSON.parse(userEmail);
+                const API_URL = isActiveToggle
+                    ? "/user/active"
+                    : "/user/inactive";
+                const response = await fetch(
+                    API_URL.concat(API_URL + "?email=" + email),
+                    {
+                        method: "get",
+                        headers: {
+                            "Content-Type": "application/json",
+                            Authorization: `Bearer ${parsedEmail}`,
+                        },
+                    }
+                );
 
                 if (!response.ok) {
                     throw new Error("Network response was not ok");
@@ -46,7 +58,6 @@ const User: React.FC<Users> = ({ name, email, isActive }) => {
 
                 const data = await response.json();
                 console.log("User: ", data);
-
             } catch (error) {
                 console.error("Error fetching user: ", error);
             }
@@ -77,91 +88,107 @@ const User: React.FC<Users> = ({ name, email, isActive }) => {
                     {email}
                 </Text>
             </View>
-            <Switch className="transform scale-110" value={isActiveToggle} onValueChange={toggleIsActive} />
+            <Switch
+                value={isActiveToggle}
+                onValueChange={toggleIsActive}
+                trackColor={{ false: "#767577", true: Colors.primary1 }}
+                thumbColor={isActiveToggle ? "#f4f3f4" : "#f4f3f4"}
+                ios_backgroundColor="#3e3e3e"
+                style={{ transform: [{ scaleX: 1.1 }, { scaleY: 1.1 }] }}
+            />
         </View>
-    )
-}
-
+    );
+};
 
 const ManageUsers = () => {
     const route = useRoute<ManageUsersScreenRouteProp>();
-    const [users, setUsers] = useState([
-        // { name: 'Dillon Audris', email: 'godillon@example.com', isActive: true },
-        // { name: 'Austin Pardosi', email: 'austinpardosi@example.com', isActive: false },
-        // { name: 'Manuella Sianipar', email: 'manuella@example.com', isActive: true },
-        // { name: 'Salomo Manalu', email: 'salmanalu@example.com', isActive: false },
-    ]);
+    const [users, setUsers] = useState<Users[]>([]);
 
     useEffect(() => {
         const fecthUsers = async () => {
-            try{
-                const response = await fetch(ApiUrl.concat("/user/all"), {
+            try {
+                const userEmail = await AsyncStorage.getItem("Email");
+                if (!userEmail) {
+                  throw new Error("Email not found in storage");
+              }
+
+              const parsedEmail = JSON.parse(userEmail);
+                const response = await fetch(API_URL.concat("/user/all"), {
                     method: "get",
                     headers: {
-                      "Content-Type": "application/json",
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${parsedEmail}`,
                     },
-                  });
+                });
 
-                  if (!response.ok) {
+                if (!response.ok) {
                     throw new Error("Network response was not ok");
-                  }
+                }
 
-                  const data = await response.json();
-                  console.log("Users: ", data);
+                const data = await response.json();
+                console.log("Users: ", data);
 
-                  const usersData = data.Users;
+                const usersData = data.Users;
 
-                  const users = usersData.map((user: any) => (
-                    {
-                        name: user.Email,
-                        email: user.Email,
-                        isActive: user.IsActive,
-                    }
-                  ));
+                const users = usersData.map((user: any) => ({
+                    name: user.Email,
+                    email: user.Email,
+                    isActive: user.IsActive,
+                }));
 
-                  setUsers(users);
+                setUsers(users);
             } catch (error) {
                 console.error("Error fetching users: ", error);
-              }
+            }
         };
 
         fecthUsers();
     }, []);
 
-    const [newUserEmail, setNewUserEmail] = useState('');
+    const [newUserEmail, setNewUserEmail] = useState("");
     const [showTextInput, setShowTextInput] = useState(false);
 
     const handleAddUser = () => {
-        if (newUserEmail.trim() === '') {
+        if (newUserEmail.trim() === "") {
             return;
         }
         const fetchAdd = async () => {
             try {
-                const response = await fetch(ApiUrl.concat('/user/insert'), {
-                    method: 'POST',
+                const userEmail = await AsyncStorage.getItem("Email");
+                if (!userEmail) {
+                  throw new Error("Email not found in storage");
+              }
+
+              const parsedEmail = JSON.parse(userEmail);
+                const response = await fetch(API_URL.concat("/user/insert"), {
+                    method: "POST",
                     headers: {
-                        'Content-Type': 'application/json',
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${parsedEmail}`,
                     },
                     body: JSON.stringify({
                         email: newUserEmail,
                         is_active: true,
                     }),
                 });
-        
+
                 if (!response.ok) {
-                    throw new Error('Network response was not ok');
+                    throw new Error("Network response was not ok");
                 }
-        
+
                 const data = await response.json();
-                console.log('User:', data);
+                console.log("User:", data);
             } catch (error) {
-                console.error('Error adding user:', error);
+                console.error("Error adding user:", error);
             }
         };
 
         fetchAdd();
-        setUsers([...users, { name: newUserEmail, email: newUserEmail, isActive: true }]);
-        setNewUserEmail('');
+        setUsers([
+            ...users,
+            { name: newUserEmail, email: newUserEmail, isActive: true },
+        ]);
+        setNewUserEmail("");
         setShowTextInput(false);
     };
 
@@ -170,104 +197,158 @@ const ManageUsers = () => {
     };
 
     return (
-        <SafeAreaView className="flex-1 bg-white">
-            <StatusBar backgroundColor={Colors.primary1} />
-            <HeaderManageUsers/>
-            <Text style={styles.titleText}>List Users</Text>
-            <ScrollView>
-                {/* Dummy data  */}
-                {users.map((user) => (
-                    <User key={user.email} {...user} />
-                ))}
-            {!showTextInput && (
-                <View style={styles.addButtonContainer}>
-                    <TouchableOpacity
-                        style={styles.addButton}
-                        onPress={handleShowTextInput}
-                    >
-                        <Text style={styles.buttonText}>+</Text>
-                    </TouchableOpacity>
+        <View style={styles.container}>
+            <SafeAreaView style={styles.safeArea}>
+                <StatusBar backgroundColor={Colors.primary1} />
+                <HeaderManageUsers />
+                <Text style={styles.titleText}>List Users</Text>
+                <View style={styles.scrollViewContainer}>
+                    <ScrollView>
+                        {/* Dummy data */}
+                        {users.map((user) => (
+                            <User key={user.email} {...user} />
+                        ))}
+                    </ScrollView>
+                    {/* Bottom container for adding new user */}
+                    <View style={styles.bottomContainer}>
+                        {!showTextInput && (
+                            <View style={styles.addButtonContainer}>
+                                <TouchableOpacity
+                                    style={styles.addButton}
+                                    onPress={handleShowTextInput}
+                                >
+                                    <Text style={styles.buttonText}>+</Text>
+                                </TouchableOpacity>
+                            </View>
+                        )}
+                        {/* Input field for new user */}
+                        {showTextInput && (
+                            <View style={styles.inputContainer}>
+                                <TouchableOpacity
+                                    onPress={() => setShowTextInput(false)}
+                                    style={styles.backButton}
+                                >
+                                    <Ionicons
+                                        name="arrow-back"
+                                        size={20}
+                                        color={Colors.black}
+                                    />
+                                </TouchableOpacity>
+                                <TextInput
+                                    style={styles.input}
+                                    value={newUserEmail}
+                                    onChangeText={setNewUserEmail}
+                                    placeholder="Enter email"
+                                />
+                                <TouchableOpacity
+                                    style={styles.addUserButton}
+                                    onPress={handleAddUser}
+                                >
+                                    <Text style={styles.addUserButtonText}>
+                                        Add User
+                                    </Text>
+                                </TouchableOpacity>
+                            </View>
+                        )}
+                    </View>
                 </View>
-            )}
-            {/* Input field for new user */}
-            {showTextInput && (
-                <View style={styles.inputContainer}>
-                    <TextInput
-                        style={styles.input}
-                        value={newUserEmail}
-                        onChangeText={setNewUserEmail}
-                        placeholder="Enter email"
-                    />
-                    <TouchableOpacity
-                        style={styles.addUserButton}
-                        onPress={handleAddUser}
-                    >
-                        <Text style={styles.buttonText}>Add User</Text>
-                    </TouchableOpacity>
-                </View>
-            )}
-            </ScrollView>
-        </SafeAreaView>
-    )
-}
+            </SafeAreaView>
+        </View>
+    );
+};
 
-const styles = {
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+    },
+
+    safeArea: {
+        flex: 1,
+        backgroundColor: "white",
+    },
+
+    scrollViewContainer: {
+        flex: 1,
+        paddingBottom: 70,
+    },
+
+    bottomContainer: {
+        position: "absolute",
+        bottom: 0,
+        left: 0,
+        right: 0,
+        backgroundColor: "white",
+        borderTopWidth: 1,
+        borderTopColor: "lightgray",
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        paddingHorizontal: 20,
+        paddingVertical: 10,
+    },
+
+    backButton: {
+        padding: 5,
+    },
     titleText: {
-      fontFamily: 'Roboto',
-      fontWeight: 'bold',
-      color: '#5F6368', // Custom gray color
-      fontSize: 14, // Base font size
-      textAlign: 'left',
-      paddingLeft: 40,
-      paddingRight: 40,
-      paddingTop: 25,
-      paddingBottom: 20,
-    },
-    addButtonContainer: {
-        justifyContent: 'center',
-        alignItems: 'center',
-        padding: 20,
-    },
-    inputContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
+        fontFamily: "Roboto",
+        fontWeight: "bold",
+        color: "#5F6368",
+        fontSize: 16,
+        textAlign: "left",
         paddingLeft: 40,
         paddingRight: 40,
         paddingTop: 25,
         paddingBottom: 20,
     },
+    addButtonContainer: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    inputContainer: {
+        flexDirection: "row",
+        alignItems: "center",
+        paddingLeft: 20,
+        paddingRight: 20,
+        marginBottom: 10,
+        marginLeft: 10,
+    },
     input: {
         flex: 1,
-        borderColor: 'gray',
+        color: "black",
+        borderColor: "gray",
         borderWidth: 1,
         borderRadius: 10,
-        padding: 10,
-        marginBottom: 10,
     },
     addButton: {
-        backgroundColor: Colors.primary2,
+        backgroundColor: Colors.primary1,
         width: 50,
         height: 50,
         borderRadius: 25,
-        justifyContent: 'center',
-        alignItems: 'center',
+        justifyContent: "center",
+        alignItems: "center",
         marginBottom: 10,
         marginLeft: 10,
     },
     addUserButton: {
-        backgroundColor: Colors.primary2,
+        backgroundColor: Colors.primary1,
         padding: 10,
         borderRadius: 20,
-        alignItems: 'center',
+        alignItems: "center",
         marginBottom: 10,
         marginLeft: 10,
         minWidth: 100,
     },
     buttonText: {
-        color: 'white',
-        fontSize: 16,
-        fontWeight: 'bold',
+        color: "white",
+        fontSize: 30,
     },
-  };
+    addUserButtonText: {
+        color: "white",
+        fontSize: 16,
+        fontWeight: "bold",
+    },
+});
 
 export default ManageUsers;
